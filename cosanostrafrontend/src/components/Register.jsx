@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import shopicon from '../assets/barbershopicon.jpg';
+import shopicon from '../assets/knglava.jpg';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function Register() {
@@ -63,72 +63,83 @@ export default function Register() {
   return (
     <div className='min-h-screen flex bg-neutral-950'>
   <div className='grid grid-cols-1 md:grid-cols-2 m-auto shadow-lg shadow-gray-1000 sm:max-w-[900px] bg-black'>
-    <div className='w-full h-full md:h-auto'>
-      <img className='w-full h-full object-contain' src={shopicon} alt='Shop icon' />
+    
+    {/* For larger screens (sm and up), keep the icon on the left, center it vertically */}
+    <div className='w-full h-full md:h-auto flex justify-center md:justify-start items-center'>
+      <img className='w-full h-64 md:w-auto md:h-48 object-contain' src={shopicon} alt='Shop icon' />
     </div>
+
     <div className='p-4 flex flex-col justify-center'>
-      <form onSubmit={handleRegister} className="space-y-4">
-        <h2 className='text-4xl font-bold text-center mb-8 text-white'>Cosa Nostra</h2>
+      <form onSubmit={handleRegister} className="space-y-6">
+        <h2 className='text-4xl font-bold text-center mb-8 text-white'>Kosa Nostra</h2>
+        
         <div className='flex flex-col'>
           <input
-            className='border p-2 mb-1 bg-neutral-700 text-white'
+            className='border p-2 mb-1 bg-neutral-700 text-white rounded'
             type='text'
-            placeholder='Username'
+            placeholder='Korisničko ime'
             value={clientUsername}
             onChange={(e) => setUsername(e.target.value)}
           />
           {errors.username && <p className='text-red-500'>{errors.username}</p>}
         </div>
+
+        {/* Remaining input fields */}
         <div className='flex flex-col'>
           <input
-            className='border p-2 mb-1 bg-neutral-700 text-white'
+            className='border p-2 mb-1 bg-neutral-700 text-white rounded'
             type='text'
-            placeholder='Phone number'
+            placeholder='Broj telefona'
             value={clientPhone}
             onChange={(e) => setClientPhone(e.target.value)}
           />
         </div>
+
         <div className='flex flex-col'>
           <input
-            className='border p-2 mb-1 bg-neutral-700 text-white'
+            className='border p-2 mb-1 bg-neutral-700 text-white rounded'
             type='password'
-            placeholder='Password'
+            placeholder='Lozinka'
             value={clientPassword}
             onChange={(e) => setPassword(e.target.value)}
           />
           {errors.password && <p className='text-red-500'>{errors.password}</p>}
         </div>
+
         <div className='flex flex-col'>
           <input
-            className='border p-2 mb-1 bg-neutral-700 text-white'
+            className='border p-2 mb-1 bg-neutral-700 text-white rounded'
             type='password'
-            placeholder='Repeat Password'
+            placeholder='Ponovi lozinku'
             value={repeatedPassword}
             onChange={(e) => setRepeatedPassword(e.target.value)}
           />
           {errors.confirmPassword && <p className='text-red-500'>{errors.confirmPassword}</p>}
         </div>
+
         <div className='flex flex-col'>
           <input
-            className='border p-2 mb-1 bg-neutral-700 text-white'
+            className='border p-2 mb-1 bg-neutral-700 text-white rounded'
             type='text'
-            placeholder='Name'
+            placeholder='Ime'
             value={clientName}
             onChange={(e) => setName(e.target.value)}
           />
         </div>
+
         <div className='flex flex-col'>
           <input
-            className='border p-2 mb-1 bg-neutral-700 text-white'
+            className='border p-2 mb-1 bg-neutral-700 text-white rounded'
             type='text'
-            placeholder='Surname'
+            placeholder='Prezime'
             value={clientSurname}
             onChange={(e) => setSurname(e.target.value)}
           />
         </div>
+
         <div className='flex flex-col'>
           <input
-            className='border p-2 mb-1 bg-neutral-700 text-white'
+            className='border p-2 mb-1 bg-neutral-700 text-white rounded'
             type='text'
             placeholder='E-Mail'
             value={clientEmail}
@@ -136,14 +147,17 @@ export default function Register() {
           />
           {errors.email && <p className='text-red-500'>{errors.email}</p>}
         </div>
+
         {error && <p className='text-red-500'>{error}</p>}
-        <button className='w-full py-2 my-4 bg-neutral-600 hover:bg-neutral-800 text-white'>
-          Create account
+
+        <button className='w-full py-2 my-4 bg-neutral-600 hover:bg-neutral-800 text-white rounded'>
+          Kreiraj nalog
         </button>
+
       </form>
-      <Link to="/" className="text-center text-white font-bold">Back to Home</Link>
     </div>
   </div>
 </div>
+
   );
 }
