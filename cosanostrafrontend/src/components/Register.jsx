@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import shopicon from '../assets/knglava.jpg';
 import { Link, useNavigate } from 'react-router-dom';
+import Footer from './Footer';
 
 export default function Register() {
   const [clientUsername, setUsername] = useState('');
@@ -157,6 +158,7 @@ export default function Register() {
       </form>
     </div>
   </div>
+  <Footer/>
 </div>
 
   );

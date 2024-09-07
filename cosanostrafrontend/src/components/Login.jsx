@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import shopicon from '../assets/barbershopicon.jpg';
 import { Link, useNavigate } from 'react-router-dom';
+import Footer from './Footer';
 
 export default function Login({ onLogin }) {
   const [clientUsername, setUsername] = useState('');
@@ -38,7 +39,7 @@ export default function Login({ onLogin }) {
   };
 
   return (
-    <div className='w-full h-screen flex bg-neutral-950'>
+    <div className='min-h-screen flex flex-c justify-between bg-neutral-950'>
       <div className='grid grid-cols-1 md:grid-cols-2 m-auto h-[550px] shadow-lg shadow-neutral-600 sm:max-w-[900px] bg-black'>
         <div className='w-full h-[550px] hidden md:block'>
           <img className='w-full' src={shopicon} alt='Shop icon' />
@@ -57,6 +58,8 @@ export default function Login({ onLogin }) {
           <Link to="/" className="text-center text-white font-bold">Back to Home</Link>
         </div>
       </div>
+      <Footer/>
     </div>
+
   );
 }

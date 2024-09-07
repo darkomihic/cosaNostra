@@ -20,9 +20,9 @@ export default function ServicesTable() {
   <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3">
     {services.map((service, index) => (
       <div key={index} 
-           className="bg-zinc-800 text-white p-4 sm:p-3 w-full sm:h-28 h-36 rounded-lg shadow-md flex justify-between items-center">    
-          <h3 className="font-semibold xl:text-3xl lg:text-3xl md:text-xl sm:text-2xl text-xl">{service.serviceName}</h3>
-          <p className="whitespace-nowrap xl:text-3xl lg:text-2xl md:text-lg sm:text-xl">{service.servicePrice} RSD</p>
+           className="bg-zinc-800 text-white p-4 sm:p-3 w-full sm:h-36 rounded-lg shadow-md flex justify-between items-center">    
+          <h3 className="font-semibold xl:text-3xl lg:text-3xl md:text-xl sm:text-base mr-2">{service.serviceName}</h3>
+          <p className="whitespace-nowrap xl:text-3xl lg:text-2xl md:text-lg sm:text-base">{service.servicePrice} RSD</p>
       </div>
     ))}
   </div>

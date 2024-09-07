@@ -3,9 +3,10 @@ import Logo from '../assets/barbershopicon.jpg';
 import Map from '../assets/mappin.png';
 import Phone from '../assets/telephone.png';
 
+
 import { Link, useNavigate } from 'react-router-dom'; // Import Link from react-router-dom
 import ServicesTable from './ServicesTable';
-
+import Footer from './Footer';
 export default function HeroLandingPage() {
   const workingHours = [
     { day: 'Monday', hours: '9:00 AM - 6:00 PM' },
@@ -81,13 +82,7 @@ export default function HeroLandingPage() {
         </section>
         <ServicesTable />
       </div>
-      <footer className="bg-zinc-900 text-zinc-400 py-4 mt-8">
-        <div className="container mx-auto text-center">
-          <p>&copy; {new Date().getFullYear()} Kosa Nostra. Sva prava zadržana.</p>
-          <p>Zapratite nas <a href="#" className="text-zinc-200">Instagram</a> | <a href="#" className="text-zinc-200">Facebook</a></p>
-          <p>Veb sajt dizajnirao i razvio <a href="https://www.github.com/darkomihic" target="_blank" rel="noopener noreferrer" className="text-zinc-200">Darko Mihić</a>.</p>
-        </div>
-      </footer>
+      <Footer/>
     </div>
   );
 }

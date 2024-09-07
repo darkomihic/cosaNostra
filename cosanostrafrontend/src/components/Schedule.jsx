@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
+import Footer from './Footer';
 
 export default function Schedule() {
   const [barbers, setBarbers] = useState([]);
@@ -174,7 +175,7 @@ export default function Schedule() {
     setAvailableSlots([]); // Clear available slots when the date is changed
   };
   return (
-    <div className='w-full h-screen flex bg-neutral-950'>
+    <div className='min-h-screen flex flex-col justify-between bg-neutral-950'>
       <div className='m-auto h-auto shadow-lg shadow-gray-1000 sm:max-w-[900px] bg-black p-6'>
         <h2 className='text-4xl font-bold text-center mb-8 text-white'>Schedule a Haircut</h2>
         <form onSubmit={handleBarberAndServiceSelect}>
@@ -251,6 +252,7 @@ export default function Schedule() {
           {/* Other input fields and submit button for scheduling the appointment */}
         </form>
       </div>
+      <Footer/>
     </div>
   );
 }
