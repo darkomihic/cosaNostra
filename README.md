@@ -6,24 +6,24 @@ The website is still in developement, and this is not the final product!
 The mock of the website which was used as inspiration to build this can be found on Figma
 https://www.figma.com/design/UZJj3Sd7hsph9irVqgzfXD/Untitled?t=ejeF5D1W3UyeUDkZ-0**
 
-#Landing Page
+## Landing Page
 
 ![image](https://github.com/user-attachments/assets/ddfeec1f-9a56-46b9-9f6f-05ac22f1b569)
 
-#Appointments page
+## Appointments page
 
 ![image](https://github.com/user-attachments/assets/3e19fc35-821a-4bb8-936d-7f4d2de8a3e3)
 
 
 
-## Features
-# Client-Side (React with Tailwind)
+# Features
+## Client-Side (React with Tailwind)
 Responsive UI: The application is fully responsive, adapting to different screen sizes using Tailwind CSS.
 Appointment Scheduling: Customers can browse available time slots and book appointments with a preferred barber.
 Authentication and Authorization: Secure user login and registration using JWT tokens. Access is restricted based on user roles (e.g., customer vs. barber).
 Payment Processing: Customers can pay for their appointments using an integrated payment gateway.
 User Dashboard: Customers can view and manage their upcoming and past appointments.
-Barber-Specific Features
+## Barber-Specific Features
 View Appointments: Barbers have a dedicated dashboard to review their upcoming appointments.
 Manage Breaks: Barbers can schedule breaks throughout their workday.
 Appointment Updates: Barbers can update the status of appointments (e.g., completed, cancelled).
@@ -44,11 +44,10 @@ Security & Payment
 JWT Authentication: JSON Web Tokens (JWT) for secure authentication and session management.
 Password Hashing: Passwords are hashed using bcrypt to ensure security.
 Payment Gateway: Integrated payment processor (e.g., Stripe or PayPal) to handle transactions securely.
-# Installation
-# Prerequisites
+ 
+# Installation prerequisites
 Node.js installed
 MySQL database setup
-(Optional) Stripe or PayPal account for payment processing
 
 
 
