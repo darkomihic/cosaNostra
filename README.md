@@ -1,7 +1,7 @@
 # Barbershop Management System
 This project is a full-stack web application designed to manage a barbershop's daily operations. Built using React, Tailwind CSS, Node.js, and MySQL, the platform supports appointment scheduling, payment processing, and barber-specific features such as managing appointments and breaks. The website is made using a mobile first approach
 
-# NOTE!
+NOTE!
 The website is still in developement, and this is not the final product!
 The mock of the website which was used as inspiration to build this can be found on Figma
 https://www.figma.com/design/UZJj3Sd7hsph9irVqgzfXD/Untitled?t=ejeF5D1W3UyeUDkZ-0**
@@ -16,7 +16,7 @@ https://www.figma.com/design/UZJj3Sd7hsph9irVqgzfXD/Untitled?t=ejeF5D1W3UyeUDkZ-
 
 
 
-# Features
+## Features
 # Client-Side (React with Tailwind)
 Responsive UI: The application is fully responsive, adapting to different screen sizes using Tailwind CSS.
 Appointment Scheduling: Customers can browse available time slots and book appointments with a preferred barber.
