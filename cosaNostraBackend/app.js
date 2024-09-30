@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import Stripe from 'stripe';
-
+import { generateClientTokenHandler, processPaymentHandler } from './controllers/braintreeController.js';
 import { verifyToken } from './middleware/authMiddleware.js';
 import { isBarber, isClient } from './middleware/roleMiddleware.js';
 import {
@@ -119,6 +119,9 @@ app.get('/barberappointment/:id', verifyToken, getBarberAppointmentHandler);
 app.post('/barberappointment', verifyToken, createBarberAppointmentsHandler);
 app.put('/barberappointment/:id', verifyToken, updateBarberAppointmentsHandler);
 app.delete('/barberappointment/:id', verifyToken, deleteBarberAppointmentsHandler);
+
+app.get('/braintree/client-token/:customerId?', generateClientTokenHandler);
+app.post('/braintree/checkout', processPaymentHandler);  // Process payment
 
 // Error handling middleware
 app.use((err, req, res, next) => {

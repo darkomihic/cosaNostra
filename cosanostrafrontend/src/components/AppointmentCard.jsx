@@ -6,7 +6,7 @@ import Calendar from '../assets/Calendar.png';
 
 function AppointmentCard({ barberName, barberSurname, appointmentDate, appointmentTime, serviceName }) {
   return (
-    <div className="max-w-sm mx-auto bg-black rounded-lg shadow-lg p-6 my-4 text-white">
+    <div className="max-w-sm mx-8 bg-black rounded-lg shadow-lg p-6 text-zinc-200">
       {/* Appointment info with icons */}
       <div className="flex items-center mb-4">
         <img src={UserPng} />
@@ -14,7 +14,7 @@ function AppointmentCard({ barberName, barberSurname, appointmentDate, appointme
       </div>
       <div className="flex items-center mb-4">
         <img src={Scissors} />
-        <p className="text-lg font-semibold pl-4">Service: {serviceName}</p>
+        <p className="text-lg font-semibold pl-4">{serviceName}</p>
       </div>
       <div className="flex items-center mb-4">
         <img src={Clock} />
@@ -25,10 +25,7 @@ function AppointmentCard({ barberName, barberSurname, appointmentDate, appointme
         <p className="text-lg font-semibold pl-4">{appointmentDate}</p>
       </div>
 
-      {/* Button at the bottom */}
-      <button className="w-full py-2 bg-zinc-800 text-white rounded-lg hover:bg-zinc-600 transition duration-300">
-        Otkaži termin
-      </button>
+    
     </div>
   );
 }

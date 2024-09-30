@@ -62,7 +62,7 @@ export default function Appointments() {
   };
 
   return (
-    <div className="bg-zinc-800 text-gray-500 min-h-screen flex flex-col items-center pt-10">
+    <div className="bg-neutral-950 text-zinc-200 min-h-screen flex flex-col items-center pt-10">
       <h2 className="text-4xl font-bold mb-4">Termini</h2>
       {error && <p className="text-red-500 text-center">{error}</p>}
       <div className="mt-4 w-full max-w-screen-lg">
@@ -78,14 +78,14 @@ export default function Appointments() {
             />
           ))
         ) : (
-          <p className="text-center">No upcoming appointments.</p>
+          <p className="text-center">Nema zakazanih termina.</p>
         )}
         <div className="flex justify-center mt-4">
           <button
             onClick={handleButtonClick}
-            className="bg-gray-500 text-white py-2 px-4 rounded-lg text-lg hover:bg-gray-700"
+            className="bg-zinc-200 text-black py-2 px-4 rounded-lg text-lg hover:bg-gray-700"
           >
-            Home
+            Početna stranica
           </button>
         </div>
       </div>
