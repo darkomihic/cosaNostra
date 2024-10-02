@@ -42,7 +42,6 @@ export default function Login({ onLogin }) {
 
 <div className='min-h-screen flex flex-col justify-between bg-neutral-950'>
   <div className='grid grid-cols-1 md:grid-cols-2 m-auto h-auto md:h-[550px] shadow-lg shadow-neutral-900 sm:max-w-[900px] bg-black rounded-2xl'>
-    {/* For small screens, the image will be on top; for larger screens, it will be side by side */}
     <div className='w-full h-full md:h-auto flex justify-center md:justify-start items-center'>
       <img className='w-full h-64 md:w-auto md:h-48 object-contain rounded-t-2xl md:rounded-l-2xl' src={shopicon} alt='Shop icon' />
     </div>

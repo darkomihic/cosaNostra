@@ -176,13 +176,13 @@ export default function Schedule() {
   };
   return (
     <div className='min-h-screen flex flex-col justify-between bg-neutral-950'>
-      <div className='m-auto h-auto shadow-lg shadow-gray-1000 sm:max-w-[900px] bg-black p-6'>
-        <h2 className='text-4xl font-bold text-center mb-8 text-white'>Schedule a Haircut</h2>
+      <div className='m-auto h-auto shadow-lg shadow-neutral-900 sm:max-w-[900px] bg-black p-6 sm:max-w-[900px] rounded-2xl'>
+        <h2 className='text-4xl font-bold text-center mb-8 text-zinc-200'>Schedule a Haircut</h2>
         <form onSubmit={handleBarberAndServiceSelect}>
           <div className='mb-4'>
-            <label className='block text-white mb-2'>Select Barber:</label>
+            <label className='block text-zinc-200 mb-2'>Select Barber:</label>
             <select
-              className='w-full p-2 bg-neutral-700 text-white'
+              className='w-full p-2 bg-zinc-200 text-black rounded-xl'
               value={selectedBarber}
               onChange={(e) => setSelectedBarber(e.target.value)}
               required
@@ -194,9 +194,9 @@ export default function Schedule() {
             </select>
           </div>
           <div className='mb-4'>
-            <label className='block text-white mb-2'>Select Service:</label>
+            <label className='block text-zinc-200 mb-2'>Select Service:</label>
             <select
-              className='w-full p-2 bg-neutral-700 text-white'
+              className='w-full p-2 bg-zinc-200 text-black rounded-xl'
               value={selectedService}
               onChange={(e) => setSelectedService(e.target.value)}
               required
@@ -208,10 +208,10 @@ export default function Schedule() {
             </select>
           </div>
           <div className='mb-4'>
-            <label className='block text-white mb-2'>Select Date:</label>
+            <label className='block text-zinc-200 mb-2'>Select Date:</label>
             <input
               type='date'
-              className='w-full p-2 bg-neutral-700 text-white'
+              className='w-full p-2 bg-zinc-200 text-black rounded-xl'
               value={selectedDate}
               onChange={handleDateChange}
               min={tomorrowDateString}
@@ -220,14 +220,14 @@ export default function Schedule() {
             />
           </div>
           <div className='mb-4'>
-            <button className='w-full py-2 my-4 bg-neutral-600 hover:bg-neutral-800 text-white'>Check Availability</button>
+            <button className='w-full py-2 my-4 bg-zinc-200 hover:bg-neutral-800 text-black rounded-xl'>Check Availability</button>
           </div>
         </form>
         {availableSlots.length > 0 && (
           <div className='mb-4'>
-            <label className='block text-white mb-2'>Available Time Slots:</label>
+            <label className='block text-zinc-200 mb-2'>Available Time Slots:</label>
             <select
-              className='w-full p-2 bg-neutral-700 text-white'
+              className='w-full p-2 bg-zinc-200 text-black rounded-xl'
               value={selectedSlot}
               onChange={(e) => setSelectedSlot(e.target.value)}
               required
@@ -240,7 +240,7 @@ export default function Schedule() {
               ))}
             </select>
             <button
-              className='w-full py-2 my-4 bg-neutral-600 hover:bg-neutral-800 text-white'
+              className='w-full py-2 my-4 bg-zinc-200 hover:bg-neutral-800 text-black rounded-xl'
               onClick={makePayment}
             >
               Schedule Appointment
@@ -252,7 +252,7 @@ export default function Schedule() {
           {/* Other input fields and submit button for scheduling the appointment */}
         </form>
       </div>
-      <Footer/>
+      <Footer className="mt-auto" />
     </div>
   );
 }
