@@ -43,7 +43,7 @@ export default function Navbar({ isLoggedIn, handleLogout }) {
                 className="block text-white bg-zinc-900 hover:bg-zinc-700 active:bg-gray-500 px-4 py-2 rounded transition text-lg"
                 onClick={closeMenu}
               >
-                Zakazi
+                Zakaži termin
               </Link>
             </li>
             <li className="mt-4 lg:mt-0 whitespace-nowrap">
@@ -58,7 +58,7 @@ export default function Navbar({ isLoggedIn, handleLogout }) {
             <li className="mt-4 lg:mt-0 whitespace-nowrap">
               <a onClick={() => { handleLogoutClick(); closeMenu(); }} 
                 className="block text-white bg-zinc-900 hover:bg-zinc-700 active:bg-gray-500 px-4 py-2 rounded transition text-lg">
-                Log out
+                Odjavi se
               </a>
             </li>
           </>
