@@ -6,7 +6,7 @@ import Calendar from '../assets/Calendar.png';
 
 function AppointmentCard({ barberName, barberSurname, appointmentDate, appointmentTime, serviceName }) {
   return (
-    <div className="max-w-sm mx-8 bg-black rounded-lg shadow-lg p-6 text-zinc-200">
+    <div className="max-w-sm mx-8 bg-black rounded-lg shadow-lg p-6 text-zinc-200 m-4">
       {/* Appointment info with icons */}
       <div className="flex items-center mb-4">
         <img src={UserPng} />
