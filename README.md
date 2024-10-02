@@ -12,7 +12,13 @@ https://www.figma.com/design/UZJj3Sd7hsph9irVqgzfXD/Untitled?t=ejeF5D1W3UyeUDkZ-
 
 ## Appointments page
 
-![image](https://github.com/user-attachments/assets/3e19fc35-821a-4bb8-936d-7f4d2de8a3e3)
+![image](https://github.com/user-attachments/assets/59a5827a-a689-49d1-a827-df2cf949fe65)
+
+
+## Login page
+
+![image](https://github.com/user-attachments/assets/b77321d4-4091-495e-a864-6b9c092cb6e1)
+
 
 
 
