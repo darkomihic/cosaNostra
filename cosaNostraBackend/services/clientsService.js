@@ -76,3 +76,21 @@ export async function deleteClient(id) {
   }
   return result;
 }
+
+export async function fetchClientVipStatus(id) {
+  try {
+    const [rows] = await pool.query(`SELECT isVIP FROM client WHERE clientId = ?`, [id]);
+
+    if (rows.length === 0) {
+      throw new Error('No client found with the provided ID');
+    }
+
+    // Convert the Buffer to boolean
+    const isVIP = rows[0].isVIP.equals(Buffer.from([1])); // Assuming 1 is true
+
+    return { isVIP }; // Return the boolean value
+  } catch (error) {
+    console.error('Error fetching VIP status:', error);
+    throw error;
+  }
+}

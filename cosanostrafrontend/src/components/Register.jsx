@@ -3,6 +3,8 @@ import shopicon from '../assets/ikona.jpg';
 import { Link, useNavigate } from 'react-router-dom';
 import Footer from './Footer';
 
+
+
 export default function Register() {
   const [clientUsername, setUsername] = useState('');
   const [clientPassword, setPassword] = useState('');
@@ -14,6 +16,8 @@ export default function Register() {
   const [error, setError] = useState('');
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+
+
 
   const handleRegister = async (e) => {
     e.preventDefault();

@@ -11,7 +11,9 @@ import {
   registerHandler,
   loginHandler,
   barberloginHandler,
-  barberregisterHandler
+  barberregisterHandler,
+  refreshTokenHandler,
+  logoutHandler
 } from './controllers/authController.js';
 import {
   getBarbersHandler,
@@ -63,6 +65,7 @@ import {
 } from './controllers/barberAppointmentsController.js';
 import { getService } from './services/servicesService.js';
 import { stripeWebhookHandler } from './controllers/stripeWebhookController.js';
+import { fetchClientVipStatusHandler } from './controllers/clientsController.js';
 
 
 const app = express();
@@ -75,8 +78,12 @@ app.use(cors()); // Enable CORS for all routes
 app.post('/create-checkout-session', createCheckoutSessionHandler);
 app.post('/register', registerHandler);
 app.post('/login', loginHandler);
-app.post('/barberregister', barberregisterHandler);
-app.post('/barberlogin', barberloginHandler);
+app.post('/barber/register', barberregisterHandler);
+app.post('/barber/login', barberloginHandler);
+app.post('/token/refresh', refreshTokenHandler);
+app.post('/logout', logoutHandler);
+
+
 
 app.get('/barbers', verifyToken, getBarbersHandler);
 app.get('/barbers/:id', verifyToken, getBarberHandler);
@@ -97,6 +104,7 @@ app.post('/clients', verifyToken, isBarber, createClientHandler);
 app.put('/clients/:id', verifyToken, isBarber, updateClientHandler);
 app.put('/clientsByUsername/:username', verifyToken, isBarber, updateClientByUsernameHandler);
 app.delete('/clients/:id', verifyToken, isBarber, deleteClientHandler);
+app.get('/vip-status/:id', verifyToken, fetchClientVipStatusHandler);
 
 app.get('/appointment', verifyToken, getAppointmentsHandler);
 app.get('/appointment/:id', verifyToken, getAppointmentHandler);

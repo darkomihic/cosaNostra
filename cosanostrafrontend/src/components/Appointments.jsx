@@ -2,16 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppointmentCard from './AppointmentCard'; // Import your card component
 import Footer from './Footer';
+import Cookies from 'js-cookie';
+
 
 export default function Appointments() {
   const [appointments, setAppointments] = useState([]);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  
 
   useEffect(() => {
-    fetchAllAppointmentsForClient();
+    const accessToken = Cookies.get('accessToken');
+    const refreshToken = Cookies.get('refreshToken');
+    
+    console.log('Access Token:', accessToken);
+    console.log('Refresh Token:', refreshToken);
+    
+    fetchAllAppointmentsForClient(); // Fetch after logging the tokens
   }, []);
+  
 
   useEffect(() => {
     const result = filterPastAppointments(appointments);

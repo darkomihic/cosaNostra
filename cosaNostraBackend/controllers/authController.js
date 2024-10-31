@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '../models/db.js';
-import {authenticateBarber, authenticateClient} from '../services/authService.js'
+import {authenticateBarber, authenticateClient, createAccessToken, createRefreshToken} from '../services/authService.js'
 
 const SECRET_KEY = process.env.SECRET_KEY || '0d9f9a8d9a8df8a9df8a9d8f8adf9a8d9f8a9d8f8adf9a8df98a9d8f';
 
@@ -51,22 +51,55 @@ export async function loginHandler(req, res) {
   const user = await authenticateClient(clientUsername, clientPassword);
   if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
-  const token = createToken({ id: user.clientId, userType: 'client' });
-  const clientId = user.clientId;
-  const isVIP = user.isVIP;
-  res.json({ auth: true, token, clientId, isVIP});
+  const accessToken = createAccessToken({ id: user.clientId, userType: 'client' });
+  const refreshToken = createRefreshToken({ id: user.clientId, userType: 'client' });
+
+  // Store the refresh token in the database
+  await pool.query(`INSERT INTO refresh_tokens (clientId, refreshToken) VALUES (?, ?)`, [user.clientId, refreshToken]);
+
+  // Set HttpOnly cookies for tokens
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // Set secure flag in production
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  });
+  
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+  });
+
+  res.json({ auth: true, clientId: user.clientId, isVIP: user.isVIP });
 }
 
 export async function barberloginHandler(req, res) {
   const { barberUsername, barberPassword } = req.body;
-  // Authenticate user
   const user = await authenticateBarber(barberUsername, barberPassword);
   if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
-  const token = createToken({ id: user.barberId, userType: 'barber' });
-  const barberId = user.barberId;
-  res.json({ auth: true, token, barberId });
+  const accessToken = createAccessToken({ id: user.barberId, userType: 'barber' });
+  const refreshToken = createRefreshToken({ id: user.barberId, userType: 'barber' });
+
+  // Store the refresh token in the database
+  await pool.query(`INSERT INTO refresh_tokens (barberId, refreshToken) VALUES (?, ?)`, [user.barberId, refreshToken]);
+
+  // Set HttpOnly cookies for tokens
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  });
+  
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+  });
+
+  res.json({ auth: true, barberId: user.barberId });
 }
+
 
 export async function barberregisterHandler(req, res, next) {
   try {
@@ -94,5 +127,45 @@ export async function barberregisterHandler(req, res, next) {
     next(error);
   }
 }
+
+export async function refreshTokenHandler(req, res) {
+  const refreshToken = req.cookies.refreshToken; // Get the refresh token from the cookies
+  if (!refreshToken) return res.status(401).json({ message: 'Refresh token is required' });
+
+  // Verify the refresh token
+  try {
+    const decoded = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
+    
+    // Optional: Check if the refresh token is in your database
+    const [storedToken] = await pool.query(`SELECT * FROM refresh_tokens WHERE refreshToken = ?`, [refreshToken]);
+    if (storedToken.length === 0) return res.status(403).json({ message: 'Refresh token is invalid' });
+
+    // Generate a new access token
+    const accessToken = createAccessToken({ id: decoded.id, userType: decoded.userType });
+    
+    // Set the new access token cookie
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
+
+    res.json({ accessToken });
+  } catch (error) {
+    return res.status(403).json({ message: 'Invalid refresh token' });
+  }
+}
+
+
+export async function logoutHandler(req, res) {
+  const { refreshToken } = req.body; // Client sends the refresh token to be removed
+  if (!refreshToken) return res.status(401).json({ message: 'Refresh token is required' });
+
+  // Remove the refresh token from the database
+  await pool.query(`DELETE FROM refresh_tokens WHERE refreshToken = ?`, [refreshToken]);
+
+  res.json({ message: 'Logged out successfully' });
+}
+
 
 
