@@ -20,37 +20,24 @@ export default function Schedule() {
   const lastDay = new Date(today);
   lastDay.setDate(today.getDate() + 8);
   const lastDayString = lastDay.toISOString().split('T')[0];
-  const [isVIP, setIsVIP] = useState(false); // State to track VIP status
-
 
   
     
 
   useEffect(() => {
-    fetchVIPStatus(); // Fetch VIP status from backend
-    fetchServices();
-    if (isVIP) {
+
+    //fetchuj isVIP direktno iz bp, obrisi isVIP u local storage
+    
+    if(localStorage.isVIP === "1") {
+      console.log("usao");
       fetchBarbers();
     } else {
       fetchBarbersNonVIP();
     }
-  }, [token, isVIP]);
+    
+    fetchServices();
+  }, [token]);
 
-  const fetchVIPStatus = async () => {
-    try {
-      const response = await fetch(`http://localhost:8080/vip-status/${localStorage.clientId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-      setIsVIP(data.isVIP);
-      console.log("OVDEEEEE" + data.isVIP);
-    } catch (error) {
-      console.error('Error fetching VIP status:', error);
-      setError('Failed to check VIP status');
-    }
-  };
 
 
   const fetchBarbers = async () => {
@@ -189,7 +176,7 @@ export default function Schedule() {
   };
   return (
     <div className='min-h-screen flex flex-col justify-between bg-neutral-950'>
-      <div className='m-auto h-auto shadow-lg shadow-neutral-900 sm:max-w-[900px] bg-black p-6rounded-2xl'>
+      <div className='m-auto h-auto shadow-lg shadow-neutral-900 sm:max-w-[900px] bg-black p-6 sm:max-w-[900px] rounded-2xl'>
         <h2 className='text-4xl font-bold text-center mb-8 text-zinc-200'>Schedule a Haircut</h2>
         <form onSubmit={handleBarberAndServiceSelect}>
           <div className='mb-4'>
@@ -256,20 +243,10 @@ export default function Schedule() {
               className='w-full py-2 my-4 bg-zinc-200 hover:bg-neutral-800 text-black rounded-xl'
               onClick={makePayment}
             >
-              Zakaži termin
+              Schedule Appointment
             </button>
-            {/* Conditionally render the second button based on VIP status */}
-            {isVIP && (
-              <button
-                className='w-full py-2 my-4 bg-zinc-200 hover:bg-neutral-800 text-black rounded-xl'
-                onClick={makePayment}
-              >
-                Zakaži termin (plati posle)
-              </button>
-            )}
           </div>
         )}
-
         {error && <p className='text-red-500'>{error}</p>}
         <form onSubmit={makePayment}>
           {/* Other input fields and submit button for scheduling the appointment */}
