@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {useNavigate } from 'react-router-dom';
 import Footer from './Footer';
+import useAuth from '../hooks/useAuth';
 
 
 export default function BarberLogin() {
@@ -9,6 +10,8 @@ export default function BarberLogin() {
   const [barberPassword, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { setAuth } = useAuth();
+
 
 
   const handleLogin = async (e) => {
@@ -28,11 +31,10 @@ export default function BarberLogin() {
         return;
       }
 
-      const data = await response.json();
-
-
-      localStorage.setItem('barberToken', data.token);
-      localStorage.setItem('barberId', data.barberId);
+      const responseData = await response.json(); // Parse the response
+      const token = responseData.token; // Access the token
+      console.log("token: " + token);
+      setAuth({ token });
       navigate('/barber-dashboard'); 
     } catch (error) {
       console.error('Error logging in:', error);

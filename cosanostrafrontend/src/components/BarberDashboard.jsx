@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { jwtDecode  } from "jwt-decode";
+import useAuth from '../hooks/useAuth';
 
 export default function BarberDashboard() {
   const [appointments, setAppointments] = useState([]);
@@ -11,6 +13,8 @@ export default function BarberDashboard() {
   const [breakDate, setBreakDate] = useState(null);
   const [startBreakDate, setStartBreakDate] = useState(null);
   const [endBreakDate, setEndBreakDate] = useState(null);
+  const { auth } = useAuth();
+  const decoded = auth?.token ? jwtDecode(auth.token) : undefined;
 
 
   useEffect(() => {
@@ -19,11 +23,11 @@ export default function BarberDashboard() {
 
   const fetchAllAppointmentsForBarber = async () => {
     try {
-      const barberId = localStorage.barberId;
+      const barberId = decoded.id;
       const response = await fetch(`http://localhost:8080/appointment-details/${barberId}`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${localStorage.barberToken}`,
+          'Authorization': `Bearer ${auth.token}`,
           'Content-Type': 'application/json',
         },
       });
@@ -42,12 +46,12 @@ export default function BarberDashboard() {
 
   const handleAvailabilityChange = async (availability) => {
     try {
-      const barberId = localStorage.barberId;
+      const barberId = decoded.id;
       const response = await fetch(`http://localhost:8080/barbers/${barberId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.barberToken}`,
+          'Authorization': `Bearer ${auth.token}`,
         },
         body: JSON.stringify({ available: availability }),
       });
@@ -72,7 +76,7 @@ export default function BarberDashboard() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.barberToken}`,
+          'Authorization': `Bearer ${auth.token}`,
         },
         body: JSON.stringify({ isVIP: 1 }),
       });
@@ -97,7 +101,7 @@ export default function BarberDashboard() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.barberToken}`,
+          'Authorization': `Bearer ${auth.token}`,
         },
         body: JSON.stringify({ isVIP: 0 }),
       });
@@ -196,12 +200,12 @@ export default function BarberDashboard() {
     }
     
     try {
-      const barberId = localStorage.barberId;
+      const barberId = decoded.id;
       const response = await fetch(`http://localhost:8080/appointment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.barberToken}`,
+          'Authorization': `Bearer ${auth.token}`,
         },
         body: JSON.stringify({
           appointmentDate: breakDate,
@@ -250,7 +254,7 @@ const handleMultipleDayBreakSubmit = async () => {
     console.log('Start Date:', startBreakDate, 'End Date:', endBreakDate);
 
     try {
-        const barberId = localStorage.barberId;
+        const barberId = decoded.id;
 
         iterateDaysInRange(startBreakDate, endBreakDate, async (date) => {
             console.log("usao");
@@ -259,8 +263,8 @@ const handleMultipleDayBreakSubmit = async () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.barberToken}`,
-                },
+                    'Authorization': `Bearer ${auth.token}`,
+                  },
                 body: JSON.stringify({
                     appointmentDate: date.toISOString().split('T')[0],
                     appointmentTime: "09:00", // Ensure time is in HH:MM format
@@ -302,7 +306,7 @@ const handleMultipleDayBreakSubmit = async () => {
       const response = await fetch(`http://localhost:8080/appointment/${appointmentId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${localStorage.barberToken}`,
+          'Authorization': `Bearer ${auth.token}`,
           'Content-Type': 'application/json',
         },
       });

@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import Footer from './Footer';
+import { jwtDecode  } from "jwt-decode";
+import useAuth from '../hooks/useAuth';
+
 
 export default function Schedule() {
+  const { auth } = useAuth();
+  const decoded = auth?.token ? jwtDecode(auth.token) : undefined;
   const [barbers, setBarbers] = useState([]);
   const [services, setServices] = useState([]);
   const [availableSlots, setAvailableSlots] = useState([]);
@@ -12,7 +17,6 @@ export default function Schedule() {
   const [selectedSlot, setSelectedSlot] = useState('');
   const [note, setNote] = useState('');
   const [error, setError] = useState('');
-  const token = localStorage.getItem('token');
   const today = new Date();
   const tomorrow = new Date(today);
   tomorrow.setDate(today.getDate() + 1);
@@ -21,22 +25,23 @@ export default function Schedule() {
   lastDay.setDate(today.getDate() + 8);
   const lastDayString = lastDay.toISOString().split('T')[0];
 
+  const isVIP = decoded?.isVIP?.data?.[0] === 1;
+
+
+
   
     
 
   useEffect(() => {
 
-    //fetchuj isVIP direktno iz bp, obrisi isVIP u local storage
-    
-    if(localStorage.isVIP === "1") {
-      console.log("usao");
+
+    if(isVIP) {
       fetchBarbers();
     } else {
       fetchBarbersNonVIP();
     }
-    
     fetchServices();
-  }, [token]);
+  }, [auth.token]);
 
 
 
@@ -46,7 +51,7 @@ export default function Schedule() {
     try {
       const response = await fetch('http://localhost:8080/barbers', {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${auth.token}`
         }
       });
       const data = await response.json(); 
@@ -57,6 +62,9 @@ export default function Schedule() {
       } else {
         setError('');
       }
+
+      
+
     } catch (error) {
       console.error('Error fetching barbers:', error);
       setError('Failed to fetch barbers');
@@ -67,7 +75,7 @@ export default function Schedule() {
     try {
       const response = await fetch('http://localhost:8080/barbers', {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${auth.token}`
         }
       });
       const data = await response.json(); 
@@ -102,7 +110,7 @@ export default function Schedule() {
       try {
         const response = await fetch(`http://localhost:8080/available-slots?barberId=${selectedBarber}&serviceId=${selectedService}&date=${selectedDate}`, {
           headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${auth.token}`
           }
         });
         const data = await response.json();
@@ -125,7 +133,7 @@ export default function Schedule() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${auth.token}`
       },
       body: JSON.stringify({
         serviceId: selectedService,
@@ -133,7 +141,7 @@ export default function Schedule() {
         appointmentDate: selectedDate,
         appointmentTime: selectedSlot,
         note: note,
-        clientId: localStorage.getItem('clientId') // Assuming you store clientId in localStorage
+        //clientId: localStorage.getItem('clientId') // Assuming you store clientId in localStorage
       })
     });
   
@@ -176,7 +184,7 @@ export default function Schedule() {
   };
   return (
     <div className='min-h-screen flex flex-col justify-between bg-neutral-950'>
-      <div className='m-auto h-auto shadow-lg shadow-neutral-900 sm:max-w-[900px] bg-black p-6 sm:max-w-[900px] rounded-2xl'>
+      <div className='m-auto h-auto shadow-lg shadow-neutral-900 bg-black p-6 sm:max-w-[900px] rounded-2xl'>
         <h2 className='text-4xl font-bold text-center mb-8 text-zinc-200'>Schedule a Haircut</h2>
         <form onSubmit={handleBarberAndServiceSelect}>
           <div className='mb-4'>
@@ -245,6 +253,14 @@ export default function Schedule() {
             >
               Schedule Appointment
             </button>
+            {decoded?.isVIP && (
+              <button
+                className='w-full py-2 my-4 bg-zinc-200 hover:bg-neutral-800 text-black rounded-xl'
+                onClick={makePayment}
+              >
+                Schedule Appointment (plati uzivo)
+              </button>
+            )}
           </div>
         )}
         {error && <p className='text-red-500'>{error}</p>}

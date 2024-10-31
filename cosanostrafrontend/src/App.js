@@ -10,6 +10,8 @@ import Success from "./components/Success"
 import Cancel from "./components/Cancel"
 import Appointments from "./components/Appointments"
 import Navbar from "./components/Navbar";
+import { AuthProvider } from './context/AuthProvider'; // Adjust the import path
+
 
 function App() {
 
@@ -27,20 +29,22 @@ function App() {
 
   return (
     <>
-        <Router>
-          <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
-          <Routes>
-            <Route path="/" element={<HeroLandingPage />} />
-            <Route path="/login" element={<Login onLogin={handleLogin} />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/schedule" element={<Schedule />} />
-            <Route path="/barber-login" element={<BarberLogin />} />
-            <Route path="/barber-dashboard" element={<BarberDashboard />} />
-            <Route path="/cancel" element={<Cancel />} />
-            <Route path="/success" element={<Success />} />
-            <Route path="/appointments" element={<Appointments />} />
-          </Routes>
-        </Router>
+      <AuthProvider>  
+          <Router>
+            <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
+            <Routes>
+              <Route path="/" element={<HeroLandingPage />} />
+              <Route path="/login" element={<Login onLogin={handleLogin} />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/schedule" element={<Schedule />} />
+              <Route path="/barber-login" element={<BarberLogin />} />
+              <Route path="/barber-dashboard" element={<BarberDashboard />} />
+              <Route path="/cancel" element={<Cancel />} />
+              <Route path="/success" element={<Success />} />
+              <Route path="/appointments" element={<Appointments />} />
+            </Routes>
+          </Router>
+        </AuthProvider>
     </>
   );
 }

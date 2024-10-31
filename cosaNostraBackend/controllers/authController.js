@@ -6,16 +6,7 @@ import {authenticateBarber, authenticateClient} from '../services/authService.js
 const SECRET_KEY = process.env.SECRET_KEY || '0d9f9a8d9a8df8a9df8a9d8f8adf9a8d9f8a9d8f8adf9a8df98a9d8f';
 
 
-export function createToken(user) {
-  const payload = {
-    id: user.id,
-    userType: user.userType // 'client' or 'barber'
-  };
-  
-  return jwt.sign(payload, SECRET_KEY, {
-    expiresIn: '24h' // token expiration time
-  });
-}
+
 
 
 export async function registerHandler(req, res, next) {
@@ -45,16 +36,25 @@ export async function registerHandler(req, res, next) {
   }
 }
 
+export function createToken(user) {
+  const payload = {
+    id: user.id,
+    userType: user.userType,  // 'client' or 'barber'
+    isVIP: user.isVIP 
+  };
+  
+  return jwt.sign(payload, SECRET_KEY, {
+    expiresIn: '15m' // token expiration time
+  });
+}
 
 export async function loginHandler(req, res) {
   const { clientUsername, clientPassword } = req.body;
   const user = await authenticateClient(clientUsername, clientPassword);
   if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
-  const token = createToken({ id: user.clientId, userType: 'client' });
-  const clientId = user.clientId;
-  const isVIP = user.isVIP;
-  res.json({ auth: true, token, clientId, isVIP});
+  const token = createToken({ id: user.clientId, userType: 'client', isVIP: user.isVIP });
+  res.json({ auth: true, token});
 }
 
 export async function barberloginHandler(req, res) {
@@ -64,8 +64,7 @@ export async function barberloginHandler(req, res) {
   if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
   const token = createToken({ id: user.barberId, userType: 'barber' });
-  const barberId = user.barberId;
-  res.json({ auth: true, token, barberId });
+  res.json({ auth: true, token });
 }
 
 export async function barberregisterHandler(req, res, next) {

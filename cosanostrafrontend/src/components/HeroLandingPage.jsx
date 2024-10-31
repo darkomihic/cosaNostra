@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import Logo from '../assets/barbershopicon.jpg';
 import Map from '../assets/mappin.png';
 import Phone from '../assets/telephone.png';
-
-
+import useAuth from '../hooks/useAuth';
 import { Link, useNavigate } from 'react-router-dom'; // Import Link from react-router-dom
 import ServicesTable from './ServicesTable';
 import Footer from './Footer';
+
 export default function HeroLandingPage() {
+  const { auth } = useAuth();
+
   const workingHours = [
     { day: 'Monday', hours: '9:00 AM - 6:00 PM' },
     { day: 'Tuesday', hours: '9:00 AM - 6:00 PM' },
@@ -29,15 +31,12 @@ export default function HeroLandingPage() {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
+    if (auth.token) {
       setIsLoggedIn(true);
     } else {
       setIsLoggedIn(false);
     }
 
-    localStorage.removeItem('barberToken');
-    localStorage.removeItem('barberId');
   }, []);
 
   return (

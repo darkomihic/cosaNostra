@@ -2,8 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppointmentCard from './AppointmentCard'; // Import your card component
 import Footer from './Footer';
+import { jwtDecode  } from "jwt-decode";
+import useAuth from '../hooks/useAuth';
 
 export default function Appointments() {
+  const { auth } = useAuth();
+  const decoded = auth?.token ? jwtDecode(auth.token) : undefined;
+
   const [appointments, setAppointments] = useState([]);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [error, setError] = useState('');
@@ -20,11 +25,11 @@ export default function Appointments() {
 
   const fetchAllAppointmentsForClient = async () => {
     try {
-      const clientId = localStorage.clientId;
+      const clientId = decoded.id;
       const response = await fetch(`http://localhost:8080/appointment-details-client/${clientId}`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${localStorage.token}`,
+          'Authorization': `Bearer ${auth.token}`,
           'Content-Type': 'application/json',
         },
       });

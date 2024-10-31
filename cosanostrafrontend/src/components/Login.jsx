@@ -2,16 +2,20 @@ import React, { useState } from 'react';
 import shopicon from '../assets/ikona.jpg';
 import { Link, useNavigate } from 'react-router-dom';
 import Footer from './Footer';
+import useAuth from '../hooks/useAuth';
+
 
 export default function Login({ onLogin }) {
   const [clientUsername, setUsername] = useState('');
   const [clientPassword, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { setAuth } = useAuth();
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     try {
       const response = await fetch('http://localhost:8080/login', {
         method: 'POST',
@@ -20,13 +24,12 @@ export default function Login({ onLogin }) {
         },
         body: JSON.stringify({ clientUsername, clientPassword }),
       });
-
+  
       if (response.ok) {
-        const data = await response.json();
-        const { token, clientId, isVIP } = data;
-        localStorage.setItem('token', token); 
-        localStorage.setItem('clientId', clientId); 
-        localStorage.setItem('isVIP', isVIP.data[0]);
+        const responseData = await response.json(); // Parse the response
+        const token = responseData.token; // Access the token
+        console.log("token: " + token);
+        setAuth({ token });
         onLogin();  // Trigger re-render of Navbar
         navigate('/');
       } else {
@@ -37,6 +40,7 @@ export default function Login({ onLogin }) {
       setError('An unexpected error occurred');
     }
   };
+  
 
   return (
 
