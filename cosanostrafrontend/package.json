@@ -1,6 +1,7 @@
 {
   "name": "cosanostrafrontend",
   "version": "0.1.0",
+  "homepage": "https://darkslateblue-swan-637455.hostingersite.com/",
   "private": true,
   "dependencies": {
     "@stripe/stripe-js": "^3.5.0",
@@ -42,4 +43,5 @@
   "devDependencies": {
     "tailwindcss": "^3.4.4"
   }
+  
 }
