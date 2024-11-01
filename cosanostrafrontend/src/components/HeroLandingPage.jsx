@@ -22,9 +22,11 @@ export default function HeroLandingPage() {
 
   const [services, setServices] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const apiUrl = process.env.REACT_APP_API_URL;
+
 
   useEffect(() => {
-    fetch('http://localhost:8080/services')
+    fetch(`${apiUrl}/services`)
       .then(response => response.json())
       .then(data => setServices(data))
       .catch(error => console.error('Error fetching services:', error));
