@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import Footer from './Footer';
+import { useNavigate } from 'react-router-dom';
 import { jwtDecode  } from "jwt-decode";
 import useAuth from '../hooks/useAuth';
 
@@ -8,6 +9,7 @@ import useAuth from '../hooks/useAuth';
 export default function Schedule() {
   const { auth } = useAuth();
   const decoded = auth?.token ? jwtDecode(auth.token) : undefined;
+  const navigate = useNavigate();
   const [barbers, setBarbers] = useState([]);
   const [services, setServices] = useState([]);
   const [availableSlots, setAvailableSlots] = useState([]);
@@ -27,11 +29,6 @@ export default function Schedule() {
 
   const isVIP = decoded?.isVIP?.data?.[0] === 1;
 
-
-
-  
-    
-
   useEffect(() => {
 
 
@@ -42,12 +39,7 @@ export default function Schedule() {
     }
     fetchServices();
   }, [auth.token]);
-
-
-
   const fetchBarbers = async () => {
-
-
     try {
       const response = await fetch('http://localhost:8080/barbers', {
         headers: {
@@ -62,15 +54,11 @@ export default function Schedule() {
       } else {
         setError('');
       }
-
-      
-
     } catch (error) {
       console.error('Error fetching barbers:', error);
       setError('Failed to fetch barbers');
     }
   };
-
   const fetchBarbersNonVIP = async () => {
     try {
       const response = await fetch('http://localhost:8080/barbers', {
@@ -91,7 +79,6 @@ export default function Schedule() {
       setError('Failed to fetch barbers');
     }
   };
-
   const fetchServices = async () => {
     try {
       const response = await fetch('http://localhost:8080/services');
@@ -102,7 +89,6 @@ export default function Schedule() {
       setError('Failed to fetch services');
     }
   };
-
   const handleBarberAndServiceSelect = async (e) => {
     e.preventDefault();
 
@@ -121,9 +107,65 @@ export default function Schedule() {
       }
     }
   };
+  const vipPayment = async () => {
+    if (!selectedService || !selectedBarber || !selectedDate || !selectedSlot) {
+      setError('Please select all required fields');
+      return;
+    }
+
+    console.log("Service duration: " + await getServiceDuration(selectedService));
+
+
+    const response = await fetch('http://localhost:8080/appointment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${auth.token}`
+      },
+      body: JSON.stringify({
+        serviceId: selectedService,
+        barberId: selectedBarber,
+        appointmentDate: selectedDate,
+        appointmentTime: dateToTime(selectedSlot),
+        appointmentDuration: await getServiceDuration(selectedService),
+        note: note,
+        clientId: decoded.id
+
+        
+      })
+
+      
+    });
+  
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Failed to create Checkout Session:', errorData.error);
+      return;
+    } else {
+      navigate('/appointments');
+    }
+
+
+  }
+
+  const getServiceDuration = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:8080/services/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${auth.token}`
+        }
+      });
+      const data = await response.json(); 
+      const duration = data.serviceDuration;
+      return duration;
+    } catch (error) {
+      console.error('Error fetching barbers:', error);
+      setError('Failed to fetch barbers');
+    }
+
+  }
 
   const makePayment = async () => {
-    console.log("selected service " + selectedService)
     if (!selectedService || !selectedBarber || !selectedDate || !selectedSlot) {
       setError('Please select all required fields');
       return;
@@ -164,6 +206,19 @@ export default function Schedule() {
     }
   };
   
+  function dateToTime(date) {
+
+    const date2 = new Date(date);
+
+    const hours = date2.getUTCHours().toString().padStart(2, '0');
+    const minutes = date2.getUTCMinutes().toString().padStart(2, '0');
+    const seconds = date2.getUTCSeconds().toString().padStart(2, '0');
+
+    // Format time as HH:MM:SS
+    const timeString = `${hours}:${minutes}:${seconds}`;
+
+    return timeString;
+  }
 
   function formatTime(time) {
     const date = new Date(time);
@@ -256,7 +311,7 @@ export default function Schedule() {
             {decoded?.isVIP && (
               <button
                 className='w-full py-2 my-4 bg-zinc-200 hover:bg-neutral-800 text-black rounded-xl'
-                onClick={makePayment}
+                onClick={vipPayment}
               >
                 Schedule Appointment (plati uzivo)
               </button>

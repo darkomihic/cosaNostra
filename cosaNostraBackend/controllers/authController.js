@@ -44,7 +44,7 @@ export function createToken(user) {
   };
   
   return jwt.sign(payload, SECRET_KEY, {
-    expiresIn: '15m' // token expiration time
+    expiresIn: '4h' // token expiration time
   });
 }
 
