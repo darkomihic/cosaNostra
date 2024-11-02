@@ -26,6 +26,8 @@ export default function Schedule() {
   const lastDay = new Date(today);
   lastDay.setDate(today.getDate() + 8);
   const lastDayString = lastDay.toISOString().split('T')[0];
+  const apiUrl = process.env.REACT_APP_API;
+
 
   const isVIP = decoded?.isVIP?.data?.[0] === 1;
 
@@ -41,7 +43,7 @@ export default function Schedule() {
   }, [auth.token]);
   const fetchBarbers = async () => {
     try {
-      const response = await fetch('http://localhost:8080/barbers', {
+      const response = await fetch(`${apiUrl}/barbers`, {
         headers: {
           'Authorization': `Bearer ${auth.token}`
         }
@@ -61,7 +63,7 @@ export default function Schedule() {
   };
   const fetchBarbersNonVIP = async () => {
     try {
-      const response = await fetch('http://localhost:8080/barbers', {
+      const response = await fetch(`${apiUrl}/barbers`, {
         headers: {
           'Authorization': `Bearer ${auth.token}`
         }
@@ -81,7 +83,7 @@ export default function Schedule() {
   };
   const fetchServices = async () => {
     try {
-      const response = await fetch('http://localhost:8080/services');
+      const response = await fetch(`${apiUrl}/services`);
       const data = await response.json();
       setServices(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -94,7 +96,7 @@ export default function Schedule() {
 
     if (selectedBarber && selectedService && selectedDate) {
       try {
-        const response = await fetch(`http://localhost:8080/available-slots?barberId=${selectedBarber}&serviceId=${selectedService}&date=${selectedDate}`, {
+        const response = await fetch(`${apiUrl}/available-slots?barberId=${selectedBarber}&serviceId=${selectedService}&date=${selectedDate}`, {
           headers: {
             'Authorization': `Bearer ${auth.token}`
           }
@@ -116,7 +118,7 @@ export default function Schedule() {
     console.log("Service duration: " + await getServiceDuration(selectedService));
 
 
-    const response = await fetch('http://localhost:8080/appointment', {
+    const response = await fetch(`${apiUrl}/appointment`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -150,7 +152,7 @@ export default function Schedule() {
 
   const getServiceDuration = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/services/${id}`, {
+      const response = await fetch(`${apiUrl}/services/${id}`, {
         headers: {
           'Authorization': `Bearer ${auth.token}`
         }

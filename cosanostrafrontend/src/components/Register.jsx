@@ -14,6 +14,8 @@ export default function Register() {
   const [error, setError] = useState('');
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const apiUrl = process.env.REACT_APP_API;
+
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -21,7 +23,7 @@ export default function Register() {
     if (validateForm()) {
       console.log('Form submitted successfully');
       try {
-        const response = await fetch('http://localhost:8080/register', {
+        const response = await fetch(`${apiUrl}/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

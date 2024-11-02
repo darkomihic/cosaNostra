@@ -11,13 +11,15 @@ export default function Login({ onLogin }) {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { setAuth } = useAuth();
+  const apiUrl = process.env.REACT_APP_API;
+
 
 
   const handleLogin = async (e) => {
     e.preventDefault();
   
     try {
-      const response = await fetch('http://localhost:8080/login', {
+      const response = await fetch(`${apiUrl}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

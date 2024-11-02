@@ -11,13 +11,15 @@ export default function BarberLogin() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { setAuth } = useAuth();
+  const apiUrl = process.env.REACT_APP_API;
+
 
 
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:8080/barberlogin', {
+      const response = await fetch(`${apiUrl}/barberlogin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

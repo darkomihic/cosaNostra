@@ -51,11 +51,11 @@ export async function getAppointmentDetails(barberId) {
     S.serviceName,
     S.servicePrice
 FROM 
-    CosaNostra.Appointment A
+    appointment A
 LEFT JOIN 
-    CosaNostra.Client C ON A.clientId = C.clientId
+    client C ON A.clientId = C.clientId
 LEFT JOIN 
-    CosaNostra.Service S ON A.serviceId = S.serviceId
+    service S ON A.serviceId = S.serviceId
 WHERE 
     A.barberId = ?;
 
@@ -74,11 +74,11 @@ export async function getAppointmentDetailsForClient(clientId) {
     S.serviceName,
     S.servicePrice
 FROM 
-    CosaNostra.Appointment A
+    appointment A
 JOIN 
-    CosaNostra.Barber b ON A.barberId = b.barberId
+    barber b ON A.barberId = b.barberId
 JOIN 
-    CosaNostra.Service S ON A.serviceId = S.serviceId
+    service S ON A.serviceId = S.serviceId
 WHERE 
     A.clientId = ?;
 

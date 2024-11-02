@@ -13,6 +13,8 @@ export default function Appointments() {
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const apiUrl = process.env.REACT_APP_API;
+
 
   useEffect(() => {
     fetchAllAppointmentsForClient();
@@ -26,15 +28,20 @@ export default function Appointments() {
   const fetchAllAppointmentsForClient = async () => {
     try {
       const clientId = decoded.id;
-      const response = await fetch(`http://localhost:8080/appointment-details-client/${clientId}`, {
+      console.log(`Fetching appointments for client ID: ${clientId}`);
+      const response = await fetch(`${apiUrl}/appointment-details-client/${clientId}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${auth.token}`,
           'Content-Type': 'application/json',
         },
       });
+      
+      console.log('Response status:', response.status); // Log the response status
+  
       if (!response.ok) {
-        throw new Error('Failed to fetch appointments');
+        const errorText = await response.text();
+        throw new Error(`Failed to fetch appointments: ${errorText}`);
       }
       const data = await response.json();
       setAppointments(data);
@@ -43,6 +50,7 @@ export default function Appointments() {
       setError(error.message);
     }
   };
+  
 
   const convertTime = (timeString) => {
     const timeParts = timeString.split(':');
