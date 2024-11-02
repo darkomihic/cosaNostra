@@ -76,7 +76,7 @@ export async function getAppointmentDetailsForClient(clientId) {
 FROM 
     appointment A
 JOIN 
-    barber B ON A.barberId = b.barberId
+    barber B ON A.barberId = B.barberId
 JOIN 
     service S ON A.serviceId = S.serviceId
 WHERE 
