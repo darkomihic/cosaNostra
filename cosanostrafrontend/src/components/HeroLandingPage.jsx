@@ -22,7 +22,7 @@ export default function HeroLandingPage() {
 
   const [services, setServices] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const apiUrl = process.env.REACT_APP_API_URL;
+  const apiUrl = process.env.REACT_APP_API;
 
 
   useEffect(() => {

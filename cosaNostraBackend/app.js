@@ -1,69 +1,20 @@
+import https from 'https';
+import fs from 'fs';
 import express from 'express';
 import cors from 'cors';
 import Stripe from 'stripe';
 import { generateClientTokenHandler, processPaymentHandler } from './controllers/braintreeController.js';
 import { verifyToken } from './middleware/authMiddleware.js';
 import { isBarber, isClient } from './middleware/roleMiddleware.js';
-import {
-  createCheckoutSessionHandler
-} from './controllers/stripeController.js';
-import {
-  registerHandler,
-  loginHandler,
-  barberloginHandler,
-  barberregisterHandler
-} from './controllers/authController.js';
-import {
-  getBarbersHandler,
-  getBarberHandler,
-  createBarberHandler,
-  updateBarberHandler,
-  deleteBarberHandler
-} from './controllers/barbersController.js';
-import {
-  getServicePriceHandler,
-  getServicesHandler,
-  getServiceHandler,
-  createServiceHandler,
-  updateServiceHandler,
-  deleteServiceHandler
-} from './controllers/servicesController.js';
-import {
-  getClientsHandler,
-  getClientHandler,
-  createClientHandler,
-  updateClientHandler,
-  updateClientByUsernameHandler,
-  deleteClientHandler
-} from './controllers/clientsController.js';
-import {
-  getAppointmentHandler,
-  getAppointmentsHandler,
-  createAppointmentHandler,
-  updateAppointmentHandler,
-  deleteAppointmentHandler,
-  GetAvailableSlotsHandler,
-  getAppointmentDetailsHandler,
-  getAppointmentDetailsForClientHandler,
-  deleteLastAppointmentHandler
-} from './controllers/appointmentsController.js';
-import {
-  getServiceAppointmentHandler,
-  getServiceAppointmentsHandler,
-  createServiceAppointmentsHandler,
-  updateServiceAppointmentsHandler,
-  deleteServiceAppointmentsHandler
-} from './controllers/serviceappointmentsController.js';
-import {
-  getBarberAppointmentHandler,
-  getBarberAppointmentsHandler,
-  createBarberAppointmentsHandler,
-  updateBarberAppointmentsHandler,
-  deleteBarberAppointmentsHandler
-} from './controllers/barberAppointmentsController.js';
-import { getService } from './services/servicesService.js';
+import { createCheckoutSessionHandler } from './controllers/stripeController.js';
+import { registerHandler, loginHandler, barberloginHandler, barberregisterHandler } from './controllers/authController.js';
+import { getBarbersHandler, getBarberHandler, createBarberHandler, updateBarberHandler, deleteBarberHandler } from './controllers/barbersController.js';
+import { getServicePriceHandler, getServicesHandler, getServiceHandler, createServiceHandler, updateServiceHandler, deleteServiceHandler } from './controllers/servicesController.js';
+import { getClientsHandler, getClientHandler, createClientHandler, updateClientHandler, updateClientByUsernameHandler, deleteClientHandler } from './controllers/clientsController.js';
+import { getAppointmentHandler, getAppointmentsHandler, createAppointmentHandler, updateAppointmentHandler, deleteAppointmentHandler, GetAvailableSlotsHandler, getAppointmentDetailsHandler, getAppointmentDetailsForClientHandler, deleteLastAppointmentHandler } from './controllers/appointmentsController.js';
+import { getServiceAppointmentHandler, getServiceAppointmentsHandler, createServiceAppointmentsHandler, updateServiceAppointmentsHandler, deleteServiceAppointmentsHandler } from './controllers/serviceappointmentsController.js';
+import { getBarberAppointmentHandler, getBarberAppointmentsHandler, createBarberAppointmentsHandler, updateBarberAppointmentsHandler, deleteBarberAppointmentsHandler } from './controllers/barberAppointmentsController.js';
 import { stripeWebhookHandler } from './controllers/stripeWebhookController.js';
-
 
 const app = express();
 const stripe = new Stripe('sk_test_51PP98SRxP15yUwgNmYFy3NfQoDI6slODC3kWM2Z1eDtPEXro38hpPEuA59oMy4UxC2tHnCFHvnFrfNzdx1UOScFZ00CPPVJpCO');
@@ -129,6 +80,18 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!');
 });
 
-app.listen(8080, () => {
-  console.log('Server is running on 8080');
+// Load SSL certificate and key
+const sslOptions = {
+  key: fs.readFileSync('/etc/letsencrypt/live/www.api.kosa-nostra.com/privkey.pem'), // Path to your Let's Encrypt private key
+  cert: fs.readFileSync('/etc/letsencrypt/live/www.api.kosa-nostra.com/fullchain.pem') // Path to your Let's Encrypt certificate
+};
+
+// Start HTTPS server
+https.createServer(sslOptions, app).listen(443, () => {
+  console.log('HTTPS Server running on port 443');
+});
+
+// Optionally, set up HTTP server to redirect to HTTPS
+app.listen(80, () => {
+  console.log('Redirecting HTTP traffic to HTTPS');
 });

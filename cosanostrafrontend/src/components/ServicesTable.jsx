@@ -5,10 +5,17 @@ export default function ServicesTable() {
 
   useEffect(() => {
     // Accessing the API URL from the environment variable
-    const apiUrl = process.env.REACT_APP_API_URL;
+    const apiUrl = process.env.REACT_APP_API; // Ensure you're using the correct variable
+
+    console.log('API URL:', apiUrl); // Log the API URL being used
 
     fetch(`${apiUrl}/services`)
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
       .then(data => setServices(data))
       .catch(error => console.error('Error fetching services:', error));
   }, []);
