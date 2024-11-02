@@ -87,7 +87,7 @@ const sslOptions = {
 };
 
 // Start HTTPS server
-https.createServer(sslOptions, app).listen(443, () => {
+https.createServer(sslOptions, app).listen(8080, () => {
   console.log('HTTPS Server running on port 8080');
 });
 
