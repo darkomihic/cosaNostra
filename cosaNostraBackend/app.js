@@ -91,7 +91,3 @@ https.createServer(sslOptions, app).listen(8080, () => {
   console.log('HTTPS Server running on port 8080');
 });
 
-// Optionally, set up HTTP server to redirect to HTTPS
-app.listen(80, () => {
-  console.log('Redirecting HTTP traffic to HTTPS');
-});
