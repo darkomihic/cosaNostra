@@ -37,9 +37,9 @@ app.post('/barberlogin', barberloginHandler);
 
 app.get('/barbers', verifyToken, getBarbersHandler);
 app.get('/barbers/:id', verifyToken, getBarberHandler);
-//app.post('/barbers', verifyToken, isBarber, createBarberHandler);
-//app.put('/barbers/:id', verifyToken, isBarber, updateBarberHandler);
-//app.delete('/barbers/:id', verifyToken, isBarber, deleteBarberHandler);
+app.post('/barbers', verifyToken, isBarber, createBarberHandler);
+app.put('/barbers/:id', verifyToken, isBarber, updateBarberHandler);
+app.delete('/barbers/:id', verifyToken, isBarber, deleteBarberHandler);
 
 app.get('/services', getServicesHandler);
 app.get('/services/:id', getServiceHandler);
