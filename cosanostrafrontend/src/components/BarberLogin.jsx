@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {useNavigate } from 'react-router-dom';
 import Footer from './Footer';
 import useAuth from '../hooks/useAuth';
+import jwtDecode from 'jwt-decode';
 
 
 export default function BarberLogin() {

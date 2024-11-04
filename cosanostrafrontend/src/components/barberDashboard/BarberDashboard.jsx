@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { jwtDecode  } from "jwt-decode";
-import useAuth from '../hooks/useAuth';
+import { jwtDecode } from "jwt-decode";
+import useAuth from '../../hooks/useAuth';
 
 export default function BarberDashboard() {
   const [appointments, setAppointments] = useState([]);
@@ -15,16 +15,19 @@ export default function BarberDashboard() {
   const [endBreakDate, setEndBreakDate] = useState(null);
   const { auth } = useAuth();
   const decoded = auth?.token ? jwtDecode(auth.token) : undefined;
+  const apiUrl = process.env.REACT_APP_API;
+
 
 
   useEffect(() => {
+    console.log("decoded: " + decoded.id);
     fetchAllAppointmentsForBarber();
   }, []);
 
   const fetchAllAppointmentsForBarber = async () => {
     try {
       const barberId = decoded.id;
-      const response = await fetch(`http://localhost:8080/appointment-details/${barberId}`, {
+      const response = await fetch(`${apiUrl}/appointment-details/${barberId}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${auth.token}`,
@@ -47,7 +50,7 @@ export default function BarberDashboard() {
   const handleAvailabilityChange = async (availability) => {
     try {
       const barberId = decoded.id;
-      const response = await fetch(`http://localhost:8080/barbers/${barberId}`, {
+      const response = await fetch(`${apiUrl}/barbers/${barberId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +75,7 @@ export default function BarberDashboard() {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:8080/clientsByUsername/${username}`, {
+      const response = await fetch(`${apiUrl}/clientsByUsername/${username}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -97,7 +100,7 @@ export default function BarberDashboard() {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:8080/clientsByUsername/${username}`, {
+      const response = await fetch(`${apiUrl}/clientsByUsername/${username}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -201,7 +204,7 @@ export default function BarberDashboard() {
     
     try {
       const barberId = decoded.id;
-      const response = await fetch(`http://localhost:8080/appointment`, {
+      const response = await fetch(`${apiUrl}/appointment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -259,7 +262,7 @@ const handleMultipleDayBreakSubmit = async () => {
         iterateDaysInRange(startBreakDate, endBreakDate, async (date) => {
             console.log("usao");
 
-            const response = await fetch(`http://localhost:8080/appointment`, {
+            const response = await fetch(`${apiUrl}/appointment`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -303,7 +306,7 @@ const handleMultipleDayBreakSubmit = async () => {
     }
   
     try {
-      const response = await fetch(`http://localhost:8080/appointment/${appointmentId}`, {
+      const response = await fetch(`${apiUrl}/appointment/${appointmentId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${auth.token}`,
