@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import shopicon from '../assets/ikona.jpg';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Footer from './Footer';
 
 export default function Register() {
@@ -68,7 +68,7 @@ export default function Register() {
   <div className='grid grid-cols-1 md:grid-cols-2 m-auto h-auto md:h-[550px] shadow-lg shadow-neutral-900 sm:max-w-[900px] bg-black rounded-2xl'>
     {/* For small screens, the image will be on top; for larger screens, it will be side by side */}
     <div className='w-full h-full md:h-auto flex justify-center md:justify-start items-center'>
-      <img className='w-full h-64 md:w-auto md:h-48 object-contain rounded-t-2xl md:rounded-l-2xl' src={shopicon} alt='Shop icon' />
+      <img className='w-full h-64 lg:w-auto lg:h-auto object-contain rounded-t-2xl lg:rounded-l-2xl' src={shopicon} alt='Shop icon' />
     </div>
 
     <div className='p-4 flex flex-col justify-around'>
@@ -94,7 +94,7 @@ export default function Register() {
 
         {error && <p className='text-red-500'>{error}</p>}
 
-        <button className='w-48 py-2 my-4 bg-zinc-200 hover:bg-neutral-800 text-black rounded-xl mx-auto'>Kreiraj nalog</button>
+        <button className='w-48 py-2 my-4 bg-zinc-200 hover:bg-neutral-800 text-black font-bold rounded-xl mx-auto'>Kreiraj nalog</button>
       </form>
     </div>
   </div>

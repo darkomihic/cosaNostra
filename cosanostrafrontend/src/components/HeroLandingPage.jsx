@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Logo from '../assets/barbershopicon.jpg';
+import newLogo from '../assets/ikona_processed.jpg';
 import Map from '../assets/mappin.png';
 import Phone from '../assets/telephone.png';
 import useAuth from '../hooks/useAuth';
-import { Link, useNavigate } from 'react-router-dom'; // Import Link from react-router-dom
 import ServicesTable from './ServicesTable';
 import Footer from './Footer';
 
@@ -49,21 +49,21 @@ export default function HeroLandingPage() {
             <div className="grid items-center grid-cols-1 gap-12 lg:grid-cols-2">
               <div>
                 <p className="text-4xl font-semibold tracking-wider text-zinc-200">Dobro došli u</p>
-                <h1 className="mt-2 text-4xl font-bold text-zinc-200 lg:mt-8 sm:text-6xl xl:text-6xl">Frizerski salon</h1>
-                <h1 className="text-4xl font-bold text-zinc-200 sm:text-6xl xl:text-8xl">Kosa Nostra</h1>
+                <h1 className="mt-2 text-4xl font-bold text-zinc-200 lg:mt-4 sm:text-6xl xl:text-6xl">Frizerski salon</h1>
+                <h1 className="text-4xl font-bold text-zinc-200 sm:text-6xl mb-2 xl:text-8xl">Kosa Nostra</h1>
               </div>
               <div className="items-center hidden lg:flex lg:justify-end lg:mr-14">
-                <img src={Logo} alt="Logo" className="sm:w-96 sm:h-96 md:w-128 lg:w-128 xl:w-128 h-auto" />
+                <img src={newLogo} alt="Logo" className="sm:w-96 sm:h-96 md:w-128 lg:w-128" />
               </div>
             </div>
-            <div className="flex items-center space-x-2 mt-2">
+            <div className="flex items-center space-x-2">
               <img
                 src={Map}
                 alt="Map"
                 className="w-8 h-8 object-cover rounded"
               />
               <p className="text-2xl font-bold text-zinc-200">
-                Adresa 20
+                Todora Toze Jovanovića 8
               </p>
             </div>
             <div className="flex items-center space-x-2 mt-2">
@@ -77,7 +77,7 @@ export default function HeroLandingPage() {
               </p>
             </div>
             <div className="lg:hidden mt-8 flex justify-center items-center">
-              <img src={Logo} alt="Logo" className="w-48 h-auto" />
+              <img src={newLogo} alt="Logo" className="w-48 h-auto" />
             </div>
           </div>
         </section>

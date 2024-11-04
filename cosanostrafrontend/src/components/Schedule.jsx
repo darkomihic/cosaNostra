@@ -17,7 +17,7 @@ export default function Schedule() {
   const [selectedService, setSelectedService] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedSlot, setSelectedSlot] = useState('');
-  const [note, setNote] = useState('');
+  const [note] = useState('');
   const [error, setError] = useState('');
   const today = new Date();
   const tomorrow = new Date(today);
@@ -167,7 +167,7 @@ export default function Schedule() {
 
   }
 
-  const makePayment = async () => {
+  /*const makePayment = async () => {
     if (!selectedService || !selectedBarber || !selectedDate || !selectedSlot) {
       setError('Please select all required fields');
       return;
@@ -206,28 +206,40 @@ export default function Schedule() {
     if (error) {
       console.error('Error redirecting to Checkout:', error);
     }
-  };
+  };*/
+
+  function makePayment() {
+    alert("Ovo će da vodi na Raiffeisen POS terminal na kraju razvoja sajta");
+  }
+  
   
   function dateToTime(date) {
-
     const date2 = new Date(date);
-
+  
+    if (isNaN(date2.getTime())) {
+      console.error('Invalid date:', date);
+      return null; // or handle it as per your need
+    }
+  
     const hours = date2.getUTCHours().toString().padStart(2, '0');
     const minutes = date2.getUTCMinutes().toString().padStart(2, '0');
     const seconds = date2.getUTCSeconds().toString().padStart(2, '0');
-
-    // Format time as HH:MM:SS
-    const timeString = `${hours}:${minutes}:${seconds}`;
-
-    return timeString;
+  
+    return `${hours}:${minutes}:${seconds}`;
   }
+  
 
-  function formatTime(time) {
+  const formatTime = (time) => {
     const date = new Date(time);
+    
+    // Subtract one hour
+    date.setHours(date.getHours() - 1);
+  
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
     return `${hours}:${minutes}`;
-  }
+  };
+  
 
   const handleDateChange = (e) => {
     const selected = e.target.value;
@@ -242,38 +254,38 @@ export default function Schedule() {
   return (
     <div className='min-h-screen flex flex-col justify-between bg-neutral-950'>
       <div className='m-auto h-auto shadow-lg shadow-neutral-900 bg-black p-6 sm:max-w-[900px] rounded-2xl'>
-        <h2 className='text-4xl font-bold text-center mb-8 text-zinc-200'>Schedule a Haircut</h2>
+        <h2 className='text-4xl font-bold text-center mb-8 text-zinc-200'>Zakaži termin</h2>
         <form onSubmit={handleBarberAndServiceSelect}>
           <div className='mb-4'>
-            <label className='block text-zinc-200 mb-2'>Select Barber:</label>
+            <label className='block text-zinc-200 mb-2'>Izaberi frizera:</label>
             <select
               className='w-full p-2 bg-zinc-200 text-black rounded-xl'
               value={selectedBarber}
               onChange={(e) => setSelectedBarber(e.target.value)}
               required
             >
-              <option value='' disabled>Select a barber</option>
+              <option value='' disabled>Frizer</option>
               {barbers.map((barber) => (
                 <option key={barber.barberId} value={barber.barberId}>{barber.barberName} {barber.barberSurname}</option>
               ))}
             </select>
           </div>
           <div className='mb-4'>
-            <label className='block text-zinc-200 mb-2'>Select Service:</label>
+            <label className='block text-zinc-200 mb-2'>Izaberi uslugu:</label>
             <select
               className='w-full p-2 bg-zinc-200 text-black rounded-xl'
               value={selectedService}
               onChange={(e) => setSelectedService(e.target.value)}
               required
             >
-              <option value='' disabled>Select a service</option>
+              <option value='' disabled>Usluga</option>
               {services.map((service) => (
                 <option key={service.serviceId} value={service.serviceId}>{service.serviceName} - {service.servicePrice}</option>
               ))}
             </select>
           </div>
           <div className='mb-4'>
-            <label className='block text-zinc-200 mb-2'>Select Date:</label>
+            <label className='block text-zinc-200 mb-2'>Izaberi datum:</label>
             <input
               type='date'
               className='w-full p-2 bg-zinc-200 text-black rounded-xl'
@@ -285,37 +297,38 @@ export default function Schedule() {
             />
           </div>
           <div className='mb-4'>
-            <button className='w-full py-2 my-4 bg-zinc-200 hover:bg-neutral-800 text-black rounded-xl'>Check Availability</button>
+            <button className='w-full py-2 my-4 bg-zinc-200 hover:bg-neutral-800 text-black rounded-xl'>Pogledaj dostupnu satnicu</button>
           </div>
         </form>
         {availableSlots.length > 0 && (
           <div className='mb-4'>
-            <label className='block text-zinc-200 mb-2'>Available Time Slots:</label>
+            <label className='block text-zinc-200 mb-2'>Izaberi vreme:</label>
             <select
               className='w-full p-2 bg-zinc-200 text-black rounded-xl'
               value={selectedSlot}
               onChange={(e) => setSelectedSlot(e.target.value)}
               required
             >
-              <option value='' disabled>Select a time slot</option>
+              <option value='' disabled>Termini</option>
               {availableSlots.map((slot, index) => (
-                <option key={index} value={`${slot.start}`}>
-                  {formatTime(slot.start)}
-                </option>
-              ))}
+              <option key={index} value={`${slot.start}`}>
+                {formatTime(new Date(slot.start))} {/* Ensure slot.start is valid */}
+              </option>
+            ))}
+
             </select>
             <button
               className='w-full py-2 my-4 bg-zinc-200 hover:bg-neutral-800 text-black rounded-xl'
               onClick={makePayment}
             >
-              Schedule Appointment
+              Zakaži termin
             </button>
             {decoded?.isVIP && (
               <button
                 className='w-full py-2 my-4 bg-zinc-200 hover:bg-neutral-800 text-black rounded-xl'
                 onClick={vipPayment}
               >
-                Schedule Appointment (plati uzivo)
+                Zakaži termin (plati uživo)
               </button>
             )}
           </div>
