@@ -17,7 +17,6 @@ import { getBarberAppointmentHandler, getBarberAppointmentsHandler, createBarber
 import { stripeWebhookHandler } from './controllers/stripeWebhookController.js';
 
 const app = express();
-const cors = require('cors');
 const stripe = new Stripe('sk_test_51PP98SRxP15yUwgNmYFy3NfQoDI6slODC3kWM2Z1eDtPEXro38hpPEuA59oMy4UxC2tHnCFHvnFrfNzdx1UOScFZ00CPPVJpCO');
 
 app.use(cors({
