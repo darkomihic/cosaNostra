@@ -17,7 +17,14 @@ import { getBarberAppointmentHandler, getBarberAppointmentsHandler, createBarber
 import { stripeWebhookHandler } from './controllers/stripeWebhookController.js';
 
 const app = express();
+const cors = require('cors');
 const stripe = new Stripe('sk_test_51PP98SRxP15yUwgNmYFy3NfQoDI6slODC3kWM2Z1eDtPEXro38hpPEuA59oMy4UxC2tHnCFHvnFrfNzdx1UOScFZ00CPPVJpCO');
+
+app.use(cors({
+  origin: 'https://kosa-nostra.com', // Allow only your frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhookHandler);
 app.use(express.json()); // Parse JSON request bodies
