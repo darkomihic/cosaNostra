@@ -26,7 +26,7 @@ app.use(cors()); // Enable CORS for all routes
 app.post('/create-checkout-session', createCheckoutSessionHandler);
 app.post('/register', registerHandler);
 app.post('/login', loginHandler);
-app.post('/barberregister', barberregisterHandler);
+//app.post('/barberregister', barberregisterHandler);
 app.post('/barberlogin', barberloginHandler);
 
 app.get('/barbers', verifyToken, getBarbersHandler);
