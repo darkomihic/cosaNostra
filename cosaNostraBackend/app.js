@@ -19,15 +19,16 @@ import { stripeWebhookHandler } from './controllers/stripeWebhookController.js';
 const app = express();
 const stripe = new Stripe('sk_test_51PP98SRxP15yUwgNmYFy3NfQoDI6slODC3kWM2Z1eDtPEXro38hpPEuA59oMy4UxC2tHnCFHvnFrfNzdx1UOScFZ00CPPVJpCO');
 
-app.use(cors({
-  origin: 'https://kosa-nostra.com', // Allow only your frontend
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+const corsOptions = {
+  origin: 'https://kosa-nostra.com',
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+
 
 app.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhookHandler);
 app.use(express.json()); // Parse JSON request bodies
-app.use(cors()); // Enable CORS for all routes
 
 app.post('/create-checkout-session', createCheckoutSessionHandler);
 app.post('/register', registerHandler);
@@ -94,6 +95,6 @@ const sslOptions = {
 
 // Start HTTPS server
 https.createServer(sslOptions, app).listen(443, () => {
-  console.log('HTTPS Server running on port 8080');
+  console.log('HTTPS Server running on port 443');
 });
 

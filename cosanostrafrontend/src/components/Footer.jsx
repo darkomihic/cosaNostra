@@ -5,7 +5,7 @@ export default function Footer() {
         <footer className="bg-zinc-900 text-zinc-400 py-4 mt-8">
             <div className="container mx-auto text-center">
                 <p>
-                    <Link to="/barber-login" className="text-zinc-400 no-underline">&copy; {new Date().getFullYear()} Kosa Nostra. Sva prava zadržana.</Link>
+                    <Link to="/barber-login" className="text-zinc-400 no-underline">&copy; </Link> {new Date().getFullYear()} Kosa Nostra. Sva prava zadržana.
                 </p>
                 <p>
                     Zapratite nas <a href="#" className="text-zinc-200">Instagram</a> | <a href="#" className="text-zinc-200">Facebook</a>
