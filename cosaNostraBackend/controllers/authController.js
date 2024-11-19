@@ -63,6 +63,18 @@ function createRefreshToken(user) {
   );
 }
 
+export function createToken(user) {
+  const payload = {
+    id: user.id,
+    userType: user.userType,  // 'client' or 'barber'
+    isVIP: user.isVIP 
+  };
+  
+  return jwt.sign(payload, SECRET_KEY, {
+    expiresIn: '4h' // token expiration time
+  });
+}
+
 // Login handler
 export async function loginHandler(req, res) {
   const { clientUsername, clientPassword } = req.body;
