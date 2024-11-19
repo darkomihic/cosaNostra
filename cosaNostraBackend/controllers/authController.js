@@ -75,6 +75,7 @@ export function createToken(user) {
   });
 }
 
+// Login handler
 export async function loginHandler(req, res) {
   const { clientUsername, clientPassword } = req.body;
 
@@ -85,29 +86,17 @@ export async function loginHandler(req, res) {
   const accessToken = createToken({ id: user.clientId, userType: 'client', isVIP: user.isVIP });
   const refreshToken = createRefreshToken({ id: user.clientId, userType: 'client' });
 
-  try {
-    // Save the refresh token in the database
-    await pool.query(
-      `INSERT INTO refresh_tokens (token, clientId) VALUES (?, ?)`,
-      [refreshToken, user.clientId]
-    );
+  // Set the refresh token in an HttpOnly cookie
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,       // Prevents JavaScript access
+    secure: true,         // Send only over HTTPS
+    sameSite: 'strict',   // CSRF protection
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
+  });
 
-    // Set the refresh token in an HttpOnly cookie
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,       // Prevents JavaScript access
-      secure: true,         // Send only over HTTPS
-      sameSite: 'strict',   // CSRF protection
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
-    });
-
-    // Send the access token in the response body
-    res.json({ accessToken });
-  } catch (err) {
-    console.error('Error saving refresh token:', err);
-    res.status(500).json({ message: 'Internal server error' });
-  }
+  // Send the access token in the response body
+  res.json({ accessToken });
 }
-
 
 
 export async function barberloginHandler(req, res) {
