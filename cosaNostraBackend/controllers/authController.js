@@ -175,39 +175,30 @@ export async function barberregisterHandler(req, res, next) {
 export async function refreshTokenHandler(req, res) {
   const refreshToken = req.cookies.refreshToken;
 
-  // Step 1: Check if the refresh token exists
   if (!refreshToken) {
     return res.status(401).json({ message: 'Refresh token missing' });
   }
 
   try {
-    // Step 2: Verify the refresh token using the refresh secret
+    // Verify the refresh token
     const decoded = jwt.verify(refreshToken, REFRESH_SECRET);
 
-    // Step 3: Check if the refresh token exists in the database
+    // (Optional) Check if the refresh token exists in your database
     const [result] = await pool.query(
-      `SELECT token, clientId FROM refresh_tokens WHERE token = ?`,
+      `SELECT token FROM refresh_tokens WHERE token = ?`,
       [refreshToken]
     );
-
     if (result.length === 0) {
-      return res.status(403).json({ message: 'Invalid or expired refresh token' });
+      return res.status(403).json({ message: 'Invalid refresh token' });
     }
 
-    // Step 4: Ensure the token belongs to the correct user (optional but recommended)
-    const storedRefreshToken = result[0];
-    if (storedRefreshToken.clientId !== decoded.id) {
-      return res.status(403).json({ message: 'Token does not belong to the correct user' });
-    }
-
-    // Step 5: Generate a new access token
+    // Generate a new access token
     const accessToken = jwt.sign(
       { id: decoded.id, userType: decoded.userType, isVIP: decoded.isVIP },
       SECRET_KEY,
-      { expiresIn: '15m' } // Access token expires in 15 minutes
+      { expiresIn: '15m' } // Short-lived access token
     );
 
-    // Step 6: Send the new access token in the response
     res.json({ accessToken });
   } catch (err) {
     console.error(err);

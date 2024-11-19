@@ -1,70 +1,101 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthProvider'; // Assuming useAuth hook is in place
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import "../assets/css/style.css"; // Ensure to import your CSS file
+import knglava from '../assets/knglava.jpg';
 
-const Navbar = ({ isLoggedIn }) => {
-  const [currentUser, setCurrentUser] = useState(null); // To store the logged-in user details
+export default function Navbar({ isLoggedIn, handleLogout }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const { logout } = useAuth(); // Assuming a logout function exists in your Auth context
 
-  // Effect hook to check if the user is logged in based on the accessToken in sessionStorage
-  useEffect(() => {
-    const accessToken = sessionStorage.getItem('accessToken');
-    if (accessToken) {
-      // Optionally fetch user data from your API or use context data
-      // setCurrentUser(fetchUserData(accessToken)); // Example: Get user details
-    }
-  }, [isLoggedIn]);
+  const handleLogoutClick = () => {
+    handleLogout();
+    navigate('/');
+  };
 
-  // Handle logout
-  const handleLogout = () => {
-    logout(); // Assuming the logout function clears the auth state and tokens
-    sessionStorage.removeItem('accessToken');
-    navigate('/login'); // Redirect to login after logging out
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
   };
 
   return (
-    <nav className="bg-blue-500 text-white p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-lg font-bold">Barbershop</Link>
-        
-        <ul className="flex space-x-6">
-          <li>
-            <Link to="/" className="hover:text-gray-300">Home</Link>
-          </li>
-          <li>
-            <Link to="/schedule" className="hover:text-gray-300">Schedule</Link>
-          </li>
-          <li>
-            <Link to="/appointments" className="hover:text-gray-300">Appointments</Link>
-          </li>
+<>
+    <nav className="relative nav">
+  <div className="flex justify-between items-center w-full p-4">
+    <a href="/">
+      <img src={knglava} className="w-16 h-16" alt="Logo" />
+    </a>
+    <button className="lg:hidden text-white text-2xl" onClick={toggleMenu}>
+      ☰ {/* Hamburger icon */}
+    </button>
+  </div>
 
-          {/* Render login and register links if not logged in */}
-          {!isLoggedIn ? (
-            <>
-              <li>
-                <Link to="/login" className="hover:text-gray-300">Login</Link>
-              </li>
-              <li>
-                <Link to="/register" className="hover:text-gray-300">Register</Link>
-              </li>
-            </>
-          ) : (
-            <>
-              {/* Render profile and logout if logged in */}
-              <li>
-                <Link to="/profile" className="hover:text-gray-300">Profile</Link>
-              </li>
-              <li>
-                <button onClick={handleLogout} className="hover:text-gray-300">Logout</button>
-              </li>
-            </>
-          )}
-        </ul>
-      </div>
-    </nav>
+  <ul className={`fixed top-0 right-0 h-full w-3/4 lg:w-auto bg-zinc-900 lg:bg-transparent transition-transform transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} lg:translate-x-0 lg:static lg:flex lg:flex-row lg:space-x-4 lg:items-center lg:h-auto`}>
+    <li className="lg:hidden flex justify-end p-4">
+      <button onClick={closeMenu} className="text-white text-2xl">
+        × {/* Close icon */}
+      </button>
+    </li>
+    {isLoggedIn ? (
+      <>
+        <li className="mt-12 lg:mt-0 whitespace-nowrap">
+          <Link
+            to="/schedule"
+            className="block text-white bg-zinc-900 hover:bg-zinc-700 active:bg-gray-500 px-4 py-2 rounded transition text-lg"
+            onClick={closeMenu}
+          >
+            Zakaži termin
+          </Link>
+        </li>
+        <li className="mt-4 lg:mt-0 whitespace-nowrap">
+          <Link
+            to="/appointments"
+            className="block text-white bg-zinc-900 hover:bg-zinc-700 active:bg-gray-500 px-4 py-2 rounded transition text-lg"
+            onClick={closeMenu}
+          >
+            Pogledaj termin
+          </Link>
+        </li>
+        <li className="mt-4 lg:mt-0 whitespace-nowrap">
+          <a
+            onClick={() => { handleLogoutClick(); closeMenu(); }}
+            className="block text-white bg-zinc-900 hover:bg-zinc-700 active:bg-gray-500 px-4 py-2 rounded transition text-lg"
+          >
+            Odjavi se
+          </a>
+        </li>
+      </>
+    ) : (
+      <>
+        <li className="mt-12 lg:mt-0 whitespace-nowrap">
+          <Link
+            to="/login"
+            className="block text-white bg-zinc-900 hover:bg-zinc-700 active:bg-gray-500 px-4 py-2 rounded transition text-lg"
+            onClick={closeMenu}
+          >
+            Prijavi se
+          </Link>
+        </li>
+        <li className="mt-4 lg:mt-0 whitespace-nowrap">
+          <Link
+            to="/register"
+            className="block text-white bg-zinc-900 hover:bg-zinc-700 active:bg-gray-500 px-4 py-2 rounded transition text-lg"
+            onClick={closeMenu}
+          >
+            Kreiraj nalog
+          </Link>
+        </li>
+      </>
+    )}
+  </ul>
+</nav>
+
+<div className="bg-red-500 text-white text-center p-4 text-lg lg:text-2xl font-semibold">
+  <p>Ova stranica je još uvek u razvoju. Trenutno nije moguće zakazivanje termina.</p>
+</div>
+
+</>
   );
-};
-
-export default Navbar;
+}
