@@ -36,16 +36,20 @@ export async function registerHandler(req, res, next) {
   }
 }
 
-export function createToken(user) {
-  const payload = {
-    id: user.id,
-    userType: user.userType,  // 'client' or 'barber'
-    isVIP: user.isVIP 
-  };
-  
-  return jwt.sign(payload, SECRET_KEY, {
-    expiresIn: '4h' // token expiration time
-  });
+export function createTokens(user) {
+  const accessToken = jwt.sign(
+    { id: user.id, userType: user.userType, isVIP: user.isVIP },
+    SECRET_KEY,
+    { expiresIn: '15m' } // Shorter expiration for access token
+  );
+
+  const refreshToken = jwt.sign(
+    { id: user.id, userType: user.userType },
+    SECRET_KEY,
+    { expiresIn: '7d' } // Longer expiration for refresh token
+  );
+
+  return { accessToken, refreshToken };
 }
 
 export async function loginHandler(req, res) {
@@ -53,18 +57,32 @@ export async function loginHandler(req, res) {
   const user = await authenticateClient(clientUsername, clientPassword);
   if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
-  const token = createToken({ id: user.clientId, userType: 'client', isVIP: user.isVIP });
-  res.json({ auth: true, token});
+  const { accessToken, refreshToken } = createTokens({
+    id: user.clientId,
+    userType: 'client',
+    isVIP: user.isVIP
+  });
+
+  // Store refresh token in the database
+  await pool.query(`UPDATE client SET refreshToken = ? WHERE clientId = ?`, [refreshToken, user.clientId]);
+
+  res.json({ auth: true, accessToken, refreshToken });
 }
 
 export async function barberloginHandler(req, res) {
   const { barberUsername, barberPassword } = req.body;
-  // Authenticate user
   const user = await authenticateBarber(barberUsername, barberPassword);
   if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
-  const token = createToken({ id: user.barberId, userType: 'barber' });
-  res.json({ auth: true, token });
+  const { accessToken, refreshToken } = createTokens({
+    id: user.barberId,
+    userType: 'barber'
+  });
+
+  // Store refresh token in the database
+  await pool.query(`UPDATE barber SET refreshToken = ? WHERE barberId = ?`, [refreshToken, user.barberId]);
+
+  res.json({ auth: true, accessToken, refreshToken });
 }
 
 export async function barberregisterHandler(req, res, next) {
@@ -93,5 +111,49 @@ export async function barberregisterHandler(req, res, next) {
     next(error);
   }
 }
+
+export async function refreshTokenHandler(req, res) {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(401).send({ message: 'Refresh token missing' });
+  }
+
+  try {
+    // Verify the refresh token
+    const decoded = jwt.verify(refreshToken, SECRET_KEY);
+
+    // Check if the refresh token matches the one stored in the database
+    const [rows] = await pool.query(
+      `SELECT refreshToken FROM ${decoded.userType} WHERE ${decoded.userType}Id = ?`,
+      [decoded.id]
+    );
+
+    if (!rows.length || rows[0].refreshToken !== refreshToken) {
+      return res.status(403).send({ message: 'Invalid refresh token' });
+    }
+
+    // Generate a new access token
+    const accessToken = jwt.sign(
+      { id: decoded.id, userType: decoded.userType },
+      SECRET_KEY,
+      { expiresIn: '15m' }
+    );
+
+    res.json({ accessToken });
+  } catch (error) {
+    res.status(403).send({ message: 'Invalid refresh token' });
+  }
+}
+
+export async function logoutHandler(req, res) {
+  const { userType, id } = req.body;
+
+  // Remove refresh token from the database
+  await pool.query(`UPDATE ${userType} SET refreshToken = NULL WHERE ${userType}Id = ?`, [id]);
+
+  res.status(200).send({ message: 'Logged out successfully' });
+}
+
 
 
