@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthProvider'; // Assuming useAuth hook is in place
+import useAuth from './useAuth'; // Assuming this hook provides access to auth tokens
 import jwtDecode from 'jwt-decode'; // Don't forget to install and import jwt-decode
 
 const useRefreshToken = () => {

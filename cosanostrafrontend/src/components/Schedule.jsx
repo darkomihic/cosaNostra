@@ -3,7 +3,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode  } from "jwt-decode";
-import { useAuth } from '../context/AuthProvider'; // Assuming useAuth hook is in place
+import useAuth from '../hooks/useAuth';
 
 
 export default function Schedule() {

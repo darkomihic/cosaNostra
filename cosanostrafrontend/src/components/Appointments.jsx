@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import AppointmentCard from './AppointmentCard'; // Import your card component
 import Footer from './Footer';
 import { jwtDecode  } from "jwt-decode";
-import { useAuth } from '../context/AuthProvider'; // Assuming useAuth hook is in place
+import useAuth from '../hooks/useAuth';
 
 export default function Appointments() {
   const { auth } = useAuth();
