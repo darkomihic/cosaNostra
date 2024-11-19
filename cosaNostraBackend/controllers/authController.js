@@ -2,9 +2,11 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '../models/db.js';
 import {authenticateBarber, authenticateClient} from '../services/authService.js'
+import jwt from 'jsonwebtoken';
+
 
 const SECRET_KEY = process.env.SECRET_KEY || '0d9f9a8d9a8df8a9df8a9d8f8adf9a8d9f8a9d8f8adf9a8df98a9d8f';
-
+const REFRESH_SECRET = process.env.REFRESH_SECRET;
 
 
 
@@ -52,22 +54,39 @@ export function createTokens(user) {
   return { accessToken, refreshToken };
 }
 
+
+// Generate the refresh token
+function createRefreshToken(user) {
+  return jwt.sign(
+    { id: user.id, userType: user.userType }, // Payload
+    process.env.REFRESH_SECRET,              // Secret key for refresh tokens
+    { expiresIn: '7d' }                      // Refresh token valid for 7 days
+  );
+}
+
+// Login handler
 export async function loginHandler(req, res) {
   const { clientUsername, clientPassword } = req.body;
+
   const user = await authenticateClient(clientUsername, clientPassword);
   if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
-  const { accessToken, refreshToken } = createTokens({
-    id: user.clientId,
-    userType: 'client',
-    isVIP: user.isVIP
+  // Create tokens
+  const accessToken = createToken({ id: user.clientId, userType: 'client', isVIP: user.isVIP });
+  const refreshToken = createRefreshToken({ id: user.clientId, userType: 'client' });
+
+  // Set the refresh token in an HttpOnly cookie
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,       // Prevents JavaScript access
+    secure: true,         // Send only over HTTPS
+    sameSite: 'strict',   // CSRF protection
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
   });
 
-  // Store refresh token in the database
-  await pool.query(`UPDATE client SET refreshToken = ? WHERE clientId = ?`, [refreshToken, user.clientId]);
-
-  res.json({ auth: true, accessToken, refreshToken });
+  // Send the access token in the response body
+  res.json({ accessToken });
 }
+
 
 export async function barberloginHandler(req, res) {
   const { barberUsername, barberPassword } = req.body;
@@ -112,48 +131,42 @@ export async function barberregisterHandler(req, res, next) {
   }
 }
 
-export async function refreshTokenHandler(req, res) {
-  const { refreshToken } = req.body;
+import jwt from 'jsonwebtoken';
 
+export async function refreshTokenHandler(req, res) {
+  const refreshToken = req.cookies.refreshToken;
+
+  // Ensure the refresh token exists
   if (!refreshToken) {
-    return res.status(401).send({ message: 'Refresh token missing' });
+    return res.status(401).json({ message: 'Refresh token missing' });
   }
 
   try {
     // Verify the refresh token
-    const decoded = jwt.verify(refreshToken, SECRET_KEY);
-
-    // Check if the refresh token matches the one stored in the database
-    const [rows] = await pool.query(
-      `SELECT refreshToken FROM ${decoded.userType} WHERE ${decoded.userType}Id = ?`,
-      [decoded.id]
-    );
-
-    if (!rows.length || rows[0].refreshToken !== refreshToken) {
-      return res.status(403).send({ message: 'Invalid refresh token' });
-    }
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
 
     // Generate a new access token
     const accessToken = jwt.sign(
       { id: decoded.id, userType: decoded.userType },
-      SECRET_KEY,
-      { expiresIn: '15m' }
+      process.env.SECRET_KEY, // Access token secret
+      { expiresIn: '15m' }    // Short-lived access token
     );
 
     res.json({ accessToken });
-  } catch (error) {
-    res.status(403).send({ message: 'Invalid refresh token' });
+  } catch (err) {
+    res.status(403).json({ message: 'Invalid or expired refresh token' });
   }
 }
 
-export async function logoutHandler(req, res) {
-  const { userType, id } = req.body;
-
-  // Remove refresh token from the database
-  await pool.query(`UPDATE ${userType} SET refreshToken = NULL WHERE ${userType}Id = ?`, [id]);
-
-  res.status(200).send({ message: 'Logged out successfully' });
+export function logoutHandler(req, res) {
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict'
+  });
+  res.status(204).send(); // No content
 }
+
 
 
 
