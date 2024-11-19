@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {useNavigate } from 'react-router-dom';
 import Footer from './Footer';
-import useAuth from '../hooks/useAuth';
+import { useAuth } from '../context/AuthProvider'; // Assuming useAuth hook is in place
 import jwtDecode from 'jwt-decode';
 
 

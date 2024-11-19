@@ -1,35 +1,35 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 
-// Create the AuthContext
-export const AuthContext = createContext();
+// Create the AuthContext internally
+const AuthContext = createContext();
 
+// The AuthProvider component wraps your app and provides authentication data
 export const AuthProvider = ({ children }) => {
-  const [auth, setAuth] = useState({
-    accessToken: null,
-  });
+  const [authData, setAuthData] = useState(null);
 
-  // Check if the token is available in cookies on load
   useEffect(() => {
-    const refreshToken = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('refreshToken='))
-      ?.split('=')[1];
-
-    if (refreshToken) {
-      // You can verify the refreshToken here by sending it to your API
-      setAuth({ accessToken: 'dummyAccessToken' });  // Replace with logic to get a valid access token
+    const storedAuth = sessionStorage.getItem('auth');
+    if (storedAuth) {
+      setAuthData(JSON.parse(storedAuth));
     }
   }, []);
 
-  // Function to log out
+  const setAuth = (data) => {
+    sessionStorage.setItem('auth', JSON.stringify(data));
+    setAuthData(data);
+  };
+
   const logout = () => {
-    setAuth({ accessToken: null });
-    document.cookie = 'refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC'; // Clear refresh token
+    sessionStorage.removeItem('auth');
+    setAuthData(null);
   };
 
   return (
-    <AuthContext.Provider value={{ auth, setAuth, logout }}>
+    <AuthContext.Provider value={{ authData, setAuth, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+// Custom hook to access authentication data
+export const useAuth = () => useContext(AuthContext);

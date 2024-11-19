@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import useAuth from '../hooks/useAuth';
+import { useAuth } from '../context/AuthProvider'; // Assuming useAuth hook is in place
 
 export default function Login({ onLogin }) {
   const [clientUsername, setUsername] = useState('');
