@@ -130,6 +130,7 @@ export async function barberregisterHandler(req, res, next) {
   }
 }
 
+import jwt from 'jsonwebtoken';
 
 export async function refreshTokenHandler(req, res) {
   const refreshToken = req.cookies.refreshToken;
