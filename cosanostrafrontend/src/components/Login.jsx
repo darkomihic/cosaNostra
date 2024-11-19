@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import shopicon from '../assets/ikona.jpg';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthProvider'; // Assuming useAuth hook is in place
+import useAuth from '../hooks/useAuth';
 
 export default function Login({ onLogin }) {
   const [clientUsername, setUsername] = useState('');
@@ -12,7 +13,7 @@ export default function Login({ onLogin }) {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     try {
       const response = await fetch(`${apiUrl}/login`, {
         method: 'POST',
@@ -27,20 +28,15 @@ export default function Login({ onLogin }) {
         const { accessToken, refreshToken } = responseData; // Destructure both tokens
         console.log("Access Token: " + accessToken);
         console.log("Refresh Token: " + refreshToken);
-
-        // Store access token in context
+        
+        // Store tokens in context
         setAuth({ accessToken });
 
-        // Store accessToken and refreshToken in sessionStorage for persistence after page reload
-        sessionStorage.setItem('auth', JSON.stringify({ accessToken, refreshToken }));
-
-        // Optionally store refreshToken in cookies for long-term use
+        // Store refresh token in the cookies
         document.cookie = `refreshToken=${refreshToken}; path=/; HttpOnly`;
 
-        // Call onLogin if provided (triggering navbar update)
-        if (onLogin) onLogin();
-
-        navigate('/');  // Redirect to homepage after successful login
+        onLogin();  // Trigger re-render of Navbar
+        navigate('/');
       } else {
         setError('Invalid username or password');
       }
@@ -54,7 +50,7 @@ export default function Login({ onLogin }) {
     <div className='min-h-screen flex flex-col justify-between bg-neutral-950'>
       <div className='grid grid-cols-1 lg:grid-cols-2 m-auto h-auto lg:h-[550px] shadow-lg shadow-neutral-900 sm:max-w-[900px] bg-black rounded-2xl'>
         <div className='w-full h-full lg:h-auto flex justify-center items-center'>
-          <img className='w-full h-64 lg:w-auto lg:h-auto object-contain rounded-t-2xl lg:rounded-l-2xl' src="/path/to/your/image" alt='Shop icon' />
+          <img className='w-full h-64 lg:w-auto lg:h-auto object-contain rounded-t-2xl lg:rounded-l-2xl' src={shopicon} alt='Shop icon' />
         </div>
 
         <div className="p-4 lg:pr-24 pr-0 flex flex-col justify-around">
@@ -83,6 +79,7 @@ export default function Login({ onLogin }) {
           <Link to="/" className="text-center text-zinc-200 font-bold sm: pt-4">Nazad na početnu stranicu</Link>
         </div>
       </div>
+      <Footer className="mt-auto" />
     </div>
   );
 }
