@@ -1,29 +1,24 @@
 import { useState, useEffect } from 'react';
 import useAuth from './useAuth'; // Assuming this hook provides access to auth tokens
-import jwtDecode from 'jwt-decode'; // Don't forget to install and import jwt-decode
 
 const useRefreshToken = () => {
   const { auth, setAuth } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  // Function to refresh the token using the refresh token (if needed)
+  // Function to refresh the token using the refresh token
   const refreshToken = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/refresh`, {
+      const response = await fetch(`${process.env.REACT_APP_API}/refresh-token`, {
         method: 'POST',
-        credentials: 'include', // Ensure cookies are sent with the request
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Authorization': `Bearer ${auth?.refreshToken}`,
+        },
       });
-
-      if (!response.ok) throw new Error('Failed to refresh token');
-
       const data = await response.json();
-      setAuth((prevAuth) => {
-        const updatedAuth = { ...prevAuth, accessToken: data.accessToken };
-        sessionStorage.setItem("auth", JSON.stringify(updatedAuth)); // Save updated auth to sessionStorage
-        return updatedAuth;
-      });
+      if (data?.accessToken) {
+        setAuth({ ...auth, token: data.accessToken });
+      }
     } catch (error) {
       console.error('Failed to refresh token:', error);
     } finally {
@@ -31,10 +26,10 @@ const useRefreshToken = () => {
     }
   };
 
-  // Optional: Refresh token if it's about to expire
+  // Check token expiration and refresh on mount or when the token is near expiration
   useEffect(() => {
-    if (auth?.accessToken) {
-      const tokenExpiration = jwtDecode(auth.accessToken).exp * 1000; // Decode token to get the expiration time
+    if (auth?.token) {
+      const tokenExpiration = jwtDecode(auth.token).exp * 1000; // Decode the token to get the expiration time
       const now = Date.now();
 
       // Refresh the token if it's about to expire in the next 5 minutes
@@ -42,7 +37,7 @@ const useRefreshToken = () => {
         refreshToken();
       }
     }
-  }, [auth, loading]);
+  }, [auth, loading, setAuth]);
 
   return { loading, refreshToken };
 };
