@@ -112,37 +112,19 @@ export async function loginHandler(req, res) {
 
 export async function barberloginHandler(req, res) {
   const { barberUsername, barberPassword } = req.body;
-
   const user = await authenticateBarber(barberUsername, barberPassword);
   if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
-  // Create tokens
-  const accessToken = createToken({ id: user.barberId, userType: 'barber' });
-  const refreshToken = createRefreshToken({ id: user.barberId, userType: 'barber' });
+  const { accessToken, refreshToken } = createTokens({
+    id: user.barberId,
+    userType: 'barber'
+  });
 
-  try {
-    // Save the refresh token in the database
-    await pool.query(
-      `INSERT INTO refresh_tokens (token, clientId) VALUES (?, ?)`,
-      [refreshToken, user.barberId]
-    );
+  // Store refresh token in the database
+  await pool.query(`UPDATE barber SET refreshToken = ? WHERE barberId = ?`, [refreshToken, user.barberId]);
 
-    // Set the refresh token in an HttpOnly cookie
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,       // Prevents JavaScript access
-      secure: true,         // Send only over HTTPS
-      sameSite: 'strict',   // CSRF protection
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
-    });
-
-    // Send the access token in the response body
-    res.json({ accessToken });
-  } catch (err) {
-    console.error('Error saving refresh token:', err);
-    res.status(500).json({ message: 'Internal server error' });
-  }
+  res.json({ auth: true, accessToken, refreshToken });
 }
-
 
 export async function barberregisterHandler(req, res, next) {
   try {
