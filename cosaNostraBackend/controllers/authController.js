@@ -175,34 +175,56 @@ export async function barberregisterHandler(req, res, next) {
 export async function refreshTokenHandler(req, res) {
   const refreshToken = req.cookies.refreshToken;
 
-  // Ensure the refresh token exists
   if (!refreshToken) {
     return res.status(401).json({ message: 'Refresh token missing' });
   }
 
   try {
     // Verify the refresh token
-    const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
+    const decoded = jwt.verify(refreshToken, REFRESH_SECRET);
+
+    // (Optional) Check if the refresh token exists in your database
+    const [result] = await pool.query(
+      `SELECT token FROM refresh_tokens WHERE token = ?`,
+      [refreshToken]
+    );
+    if (result.length === 0) {
+      return res.status(403).json({ message: 'Invalid refresh token' });
+    }
 
     // Generate a new access token
     const accessToken = jwt.sign(
-      { id: decoded.id, userType: decoded.userType },
-      process.env.SECRET_KEY, // Access token secret
-      { expiresIn: '15m' }    // Short-lived access token
+      { id: decoded.id, userType: decoded.userType, isVIP: decoded.isVIP },
+      SECRET_KEY,
+      { expiresIn: '15m' } // Short-lived access token
     );
 
     res.json({ accessToken });
   } catch (err) {
+    console.error(err);
     res.status(403).json({ message: 'Invalid or expired refresh token' });
   }
 }
 
-export function logoutHandler(req, res) {
+
+export async function logoutHandler(req, res) {
+  const refreshToken = req.cookies.refreshToken;
+
+  // Remove the token from the database
+  if (refreshToken) {
+    await pool.query(
+      `DELETE FROM refresh_tokens WHERE token = ?`,
+      [refreshToken]
+    );
+  }
+
+  // Clear the refresh token cookie
   res.clearCookie('refreshToken', {
     httpOnly: true,
     secure: true,
     sameSite: 'strict'
   });
+
   res.status(204).send(); // No content
 }
 

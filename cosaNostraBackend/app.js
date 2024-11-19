@@ -83,6 +83,11 @@ app.delete('/barberappointment/:id', verifyToken, deleteBarberAppointmentsHandle
 app.get('/braintree/client-token/:customerId?', generateClientTokenHandler);
 app.post('/braintree/checkout', processPaymentHandler);  // Process payment
 
+app.get('/profile', verifyToken, (req, res) => {
+  res.json({ userId: req.userId, userType: req.userType });
+});
+
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
