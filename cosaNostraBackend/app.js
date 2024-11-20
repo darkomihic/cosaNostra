@@ -21,7 +21,9 @@ const stripe = new Stripe('sk_test_51PP98SRxP15yUwgNmYFy3NfQoDI6slODC3kWM2Z1eDtP
 
 const corsOptions = {
   origin: 'https://kosa-nostra.com',
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true, // Allow cookies to be included  
 };
 
 app.use(cors(corsOptions));
