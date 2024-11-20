@@ -25,7 +25,6 @@ export default function Login({ onLogin }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ clientUsername, clientPassword }),
-        credentials: 'include', // Include cookies in the request
       });
   
       if (response.ok) {
