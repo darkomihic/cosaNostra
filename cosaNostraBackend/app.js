@@ -15,8 +15,6 @@ import { getAppointmentHandler, getAppointmentsHandler, createAppointmentHandler
 import { getServiceAppointmentHandler, getServiceAppointmentsHandler, createServiceAppointmentsHandler, updateServiceAppointmentsHandler, deleteServiceAppointmentsHandler } from './controllers/serviceappointmentsController.js';
 import { getBarberAppointmentHandler, getBarberAppointmentsHandler, createBarberAppointmentsHandler, updateBarberAppointmentsHandler, deleteBarberAppointmentsHandler } from './controllers/barberAppointmentsController.js';
 import { stripeWebhookHandler } from './controllers/stripeWebhookController.js';
-import cookieParser from 'cookie-parser';
-
 
 const app = express();
 const stripe = new Stripe('sk_test_51PP98SRxP15yUwgNmYFy3NfQoDI6slODC3kWM2Z1eDtPEXro38hpPEuA59oMy4UxC2tHnCFHvnFrfNzdx1UOScFZ00CPPVJpCO');
@@ -29,9 +27,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-app.use(cookieParser()); // This will make cookies accessible via req.cookies
-
 
 
 app.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhookHandler);
