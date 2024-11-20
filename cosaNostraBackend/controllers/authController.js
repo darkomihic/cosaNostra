@@ -1,10 +1,11 @@
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';  // Only one import
+import jwt from 'jsonwebtoken';
 import pool from '../models/db.js';
 import { authenticateBarber, authenticateClient } from '../services/authService.js';
 
 const SECRET_KEY = process.env.SECRET_KEY || '0d9f9a8d9a8df8a9df8a9d8f8adf9a8d9f8a9d8f8adf9a8df98a9d8f';
 const REFRESH_SECRET = process.env.REFRESH_SECRET;
+
 
 export async function registerHandler(req, res, next) {
   try {
@@ -33,12 +34,11 @@ export async function registerHandler(req, res, next) {
   }
 }
 
-// Define createToken function here
 export function createToken(user) {
   const payload = {
     id: user.id,
     userType: user.userType,  // 'client' or 'barber'
-    isVIP: user.isVIP
+    isVIP: user.isVIP 
   };
   
   return jwt.sign(payload, SECRET_KEY, {
@@ -52,16 +52,8 @@ export async function loginHandler(req, res) {
   const user = await authenticateClient(clientUsername, clientPassword);
   if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
-  const { accessToken, refreshToken } = createTokens({
-    id: user.clientId,
-    userType: 'client',
-    isVIP: user.isVIP
-  });
-
-  // Store refresh token in the database
-  await pool.query(`UPDATE client SET refreshToken = ? WHERE clientId = ?`, [refreshToken, user.clientId]);
-
-  res.json({ auth: true, accessToken, refreshToken });
+  const token = createToken({ id: user.clientId, userType: 'client', isVIP: user.isVIP });
+  res.json({ auth: true, token });
 }
 
 export async function barberloginHandler(req, res) {
@@ -95,7 +87,7 @@ export async function barberregisterHandler(req, res, next) {
     `, [barberUsername, hashedPassword, barberName, barberSurname, barberPhone, available]);
 
     const id = result.insertId;
-    res.status(201).send({ id, barberUsername, hashedPassword, barberName, barberSurname, barberPhone, available });
+    res.status(201).send({ id, barberUsername, barberName, barberSurname, barberPhone, available });
   } catch (error) {
     next(error);
   }
