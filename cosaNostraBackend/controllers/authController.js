@@ -34,6 +34,8 @@ export async function registerHandler(req, res, next) {
   }
 }
 
+
+
 export function createToken(user) {
   const payload = {
     id: user.id,
@@ -46,14 +48,35 @@ export function createToken(user) {
   });
 }
 
+function createRefreshToken(user) {
+  return jwt.sign(
+    { id: user.id, userType: user.userType }, // Payload
+    process.env.REFRESH_SECRET,              // Secret key for refresh tokens
+    { expiresIn: '7d' }                      // Refresh token valid for 7 days
+  );
+}
+
+// Login handler
 export async function loginHandler(req, res) {
   const { clientUsername, clientPassword } = req.body;
 
   const user = await authenticateClient(clientUsername, clientPassword);
   if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
-  const token = createToken({ id: user.clientId, userType: 'client', isVIP: user.isVIP });
-  res.json({ auth: true, token });
+  // Create tokens
+  const accessToken = createToken({ id: user.clientId, userType: 'client', isVIP: user.isVIP });
+  const refreshToken = createRefreshToken({ id: user.clientId, userType: 'client' });
+
+  // Set the refresh token in an HttpOnly cookie
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,       // Prevents JavaScript access
+    secure: true,         // Send only over HTTPS
+    sameSite: 'strict',   // CSRF protection
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
+  });
+
+  // Send the access token in the response body
+  res.json({ accessToken });
 }
 
 export async function barberloginHandler(req, res) {
@@ -63,6 +86,15 @@ export async function barberloginHandler(req, res) {
   if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
   const token = createToken({ id: user.barberId, userType: 'barber' });
+  const refreshToken = createRefreshToken({ id: user.barberId, userType: 'barber' });
+
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,       // Prevents JavaScript access
+    secure: true,         // Send only over HTTPS
+    sameSite: 'strict',   // CSRF protection
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
+  });
+
   res.json({ auth: true, token });
 }
 
@@ -92,3 +124,38 @@ export async function barberregisterHandler(req, res, next) {
     next(error);
   }
 }
+
+export async function refreshTokenHandler(req, res) {
+  const refreshToken = req.cookies.refreshToken;
+
+  // Ensure the refresh token exists
+  if (!refreshToken) {
+    return res.status(401).json({ message: 'Refresh token missing' });
+  }
+
+  try {
+    // Verify the refresh token
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
+
+    // Generate a new access token
+    const accessToken = jwt.sign(
+      { id: decoded.id, userType: decoded.userType },
+      process.env.SECRET_KEY, // Access token secret
+      { expiresIn: '15m' }    // Short-lived access token
+    );
+
+    res.json({ accessToken });
+  } catch (err) {
+    res.status(403).json({ message: 'Invalid or expired refresh token' });
+  }
+}
+
+export function logoutHandler(req, res) {
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict'
+  });
+  res.status(204).send(); // No content
+}
+
