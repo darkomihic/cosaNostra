@@ -30,7 +30,7 @@ export default function Login({ onLogin }) {
   
       if (response.ok) {
         const responseData = await response.json(); // Parse the response
-        const token = responseData.token; // Access the token
+        const token = responseData.accessToken; // Access the token
         console.log("token: " + token);
         setAuth({ token });
         onLogin();  // Trigger re-render of Navbar
