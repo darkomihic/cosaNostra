@@ -4,6 +4,8 @@ import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode  } from "jwt-decode";
 import useAuth from '../hooks/useAuth';
+import apiCall from '../utils/apiCall';
+
 
 
 export default function Schedule() {
@@ -43,7 +45,7 @@ export default function Schedule() {
   }, [auth.token]);
   const fetchBarbers = async () => {
     try {
-      const response = await fetch(`${apiUrl}/barbers`, {
+      const response = await apiCall(`${apiUrl}/barbers`, {
         headers: {
           'Authorization': `Bearer ${auth.token}`
         }
@@ -63,7 +65,7 @@ export default function Schedule() {
   };
   const fetchBarbersNonVIP = async () => {
     try {
-      const response = await fetch(`${apiUrl}/barbers`, {
+      const response = await apiCall(`${apiUrl}/barbers`, {
         headers: {
           'Authorization': `Bearer ${auth.token}`
         }
@@ -96,7 +98,7 @@ export default function Schedule() {
 
     if (selectedBarber && selectedService && selectedDate) {
       try {
-        const response = await fetch(`${apiUrl}/available-slots?barberId=${selectedBarber}&serviceId=${selectedService}&date=${selectedDate}`, {
+        const response = await apiCall(`${apiUrl}/available-slots?barberId=${selectedBarber}&serviceId=${selectedService}&date=${selectedDate}`, {
           headers: {
             'Authorization': `Bearer ${auth.token}`
           }
@@ -118,7 +120,7 @@ export default function Schedule() {
     console.log("Service duration: " + await getServiceDuration(selectedService));
 
 
-    const response = await fetch(`${apiUrl}/appointment`, {
+    const response = await apiCall(`${apiUrl}/appointment`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
