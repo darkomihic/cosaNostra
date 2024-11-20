@@ -1,15 +1,10 @@
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';  // Only one import
 import pool from '../models/db.js';
-import {authenticateBarber, authenticateClient} from '../services/authService.js'
-import jwt from 'jsonwebtoken';
-
+import { authenticateBarber, authenticateClient } from '../services/authService.js';
 
 const SECRET_KEY = process.env.SECRET_KEY || '0d9f9a8d9a8df8a9df8a9d8f8adf9a8d9f8a9d8f8adf9a8df98a9d8f';
 const REFRESH_SECRET = process.env.REFRESH_SECRET;
-
-
-
 
 export async function registerHandler(req, res, next) {
   try {
@@ -38,11 +33,12 @@ export async function registerHandler(req, res, next) {
   }
 }
 
+// Define createToken function here
 export function createToken(user) {
   const payload = {
     id: user.id,
     userType: user.userType,  // 'client' or 'barber'
-    isVIP: user.isVIP 
+    isVIP: user.isVIP
   };
   
   return jwt.sign(payload, SECRET_KEY, {
@@ -67,7 +63,6 @@ export async function loginHandler(req, res) {
 
   res.json({ auth: true, accessToken, refreshToken });
 }
-
 
 export async function barberloginHandler(req, res) {
   const { barberUsername, barberPassword } = req.body;
@@ -105,5 +100,3 @@ export async function barberregisterHandler(req, res, next) {
     next(error);
   }
 }
-
-
