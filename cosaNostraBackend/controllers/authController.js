@@ -70,8 +70,10 @@ export async function barberloginHandler(req, res) {
   // Store the refresh token in an HTTP-only cookie
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',  // Set 'secure' flag only in production
-    sameSite: 'strict',
+    secure: true, // Ensure you're using HTTPS in production
+    sameSite: 'None', // Necessary for cross-origin requests
+    path: '/',
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
   });
 
   // Return the access token to the client
