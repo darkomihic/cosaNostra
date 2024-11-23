@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import axiosPrivate from '../api/axiosInstance';  // axios instance with interceptors applied
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
 
 export default function ServicesTable() {
   const [services, setServices] = useState([]);
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     // Accessing the API URL from the environment variable

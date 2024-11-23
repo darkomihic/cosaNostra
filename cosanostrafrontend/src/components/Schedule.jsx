@@ -3,13 +3,12 @@ import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode  } from "jwt-decode";
 import useAuth from '../hooks/useAuth';  // Import the custom hook
-import axiosPrivate from '../api/axiosInstance';  // axios instance with interceptors applied
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
 
 
 export default function Schedule() {
   const { auth } = useAuth();
-  const decoded = auth?.token ? jwtDecode(auth.token) : undefined;
   const navigate = useNavigate();
   const [barbers, setBarbers] = useState([]);
   const [services, setServices] = useState([]);
@@ -28,12 +27,16 @@ export default function Schedule() {
   lastDay.setDate(today.getDate() + 8);
   const lastDayString = lastDay.toISOString().split('T')[0];
   const apiUrl = process.env.REACT_APP_API;
+  const axiosPrivate = useAxiosPrivate();
+  let decoded = auth?.token ? jwtDecode(auth.token) : undefined;
+  let isVIP = decoded?.isVIP?.data?.[0] === 1;
 
 
-  const isVIP = decoded?.isVIP?.data?.[0] === 1;
 
   useEffect(() => {
 
+    decoded = auth?.token ? jwtDecode(auth.token) : undefined;
+    isVIP = decoded?.isVIP?.data?.[0] === 1;
 
     if(isVIP) {
       fetchBarbers();
@@ -145,13 +148,21 @@ const vipPayment = async () => {
       }
     );
 
-    if (response.status === 200) {
+    console.log("Response received:", response);
+
+    if (response.status === 201) {
+      console.log("Navigating to /appointments");
       navigate('/appointments');
+    } else {
+      console.error('Unexpected response:', response);
+      setError('Failed to schedule the appointment');
     }
   } catch (error) {
-    console.error('Failed to create Checkout Session:', error.response?.data?.error || error);
+    console.error('Failed to create appointment:', error.response?.data?.error || error);
+    setError('Error occurred while scheduling the appointment');
   }
 };
+
 
 const getServiceDuration = async (id) => {
   try {

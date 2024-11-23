@@ -149,6 +149,7 @@ export async function refreshHandler(req, res) {
     let user;
     if (decoded.userType === 'client') {
       user = await getClient(decoded.id);
+      console.log("Client id : " + decoded.id)
     } else if (decoded.userType === 'barber') {
       user = await getBarber(decoded.id);
     } else {
