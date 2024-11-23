@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import Logo from '../assets/barbershopicon.jpg';
 import newLogo from '../assets/ikona_processed.jpg';
 import Map from '../assets/mappin.png';
 import Phone from '../assets/telephone.png';
 import useAuth from '../hooks/useAuth';
 import ServicesTable from './ServicesTable';
 import Footer from './Footer';
+import axios from 'axios';
+
 
 export default function HeroLandingPage() {
   const { auth } = useAuth();
@@ -26,21 +27,26 @@ export default function HeroLandingPage() {
 
 
   useEffect(() => {
-    fetch(`${apiUrl}/services`)
-      .then(response => response.json())
-      .then(data => setServices(data))
-      .catch(error => console.error('Error fetching services:', error));
+    // Fetch services using axios
+    const fetchServices = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/services`);
+        setServices(response.data); // Set services data from the response
+      } catch (error) {
+        console.error('Error fetching services:', error);
+      }
+    };
+  
+    fetchServices(); // Call the function to fetch services
   }, []);
-
+  
   useEffect(() => {
     if (auth.token) {
       setIsLoggedIn(true);
     } else {
       setIsLoggedIn(false);
     }
-
-  }, []);
-
+  }, [auth.token]);
   return (
     <div className="bg-black min-h-screen flex flex-col justify-between">
       <div>

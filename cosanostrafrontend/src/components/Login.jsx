@@ -3,6 +3,8 @@ import shopicon from '../assets/ikona.jpg';
 import { Link, useNavigate } from 'react-router-dom';
 import Footer from './Footer';
 import useAuth from '../hooks/useAuth';
+import axios from 'axios';
+
 
 
 export default function Login({ onLogin }) {
@@ -19,27 +21,35 @@ export default function Login({ onLogin }) {
     e.preventDefault();
   
     try {
-      const response = await fetch(`${apiUrl}/login`, {
-        method: 'POST',
+      // Send the login request using axios
+      const response = await axios.post(`${apiUrl}/login`, {
+        clientUsername,
+        clientPassword
+      }, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ clientUsername, clientPassword }),
       });
   
-      if (response.ok) {
-        const responseData = await response.json(); // Parse the response
-        const token = responseData.token; // Access the token
-        console.log("token: " + token);
-        setAuth({ token });
-        onLogin();  // Trigger re-render of Navbar
-        navigate('/');
-      } else {
-        setError('Invalid username or password');
-      }
+      // Handle successful login response
+      const { token } = response.data;  // Access the token directly from the response data
+      console.log("token: " + token);
+      
+      setAuth({ token });
+      onLogin();  // Trigger re-render of Navbar
+      navigate('/'); 
     } catch (error) {
+      // Handle errors in the request or response
       console.error('Error:', error);
-      setError('An unexpected error occurred');
+      
+      // Check if error is related to response
+      if (error.response) {
+        // If there's an error response from the server
+        setError(error.response.data.message || 'Invalid username or password');
+      } else {
+        // If there was an issue with the request itself (e.g., network issue)
+        setError('An unexpected error occurred');
+      }
     }
   };
   

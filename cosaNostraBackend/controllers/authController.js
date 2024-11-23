@@ -2,6 +2,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '../models/db.js';
 import { authenticateBarber, authenticateClient } from '../services/authService.js';
+import { getClient, getBarber } from '../services/authService.js'; // Replace with your actual service imports
+
 
 const SECRET_KEY = process.env.SECRET_KEY || '0d9f9a8d9a8df8a9df8a9d8f8adf9a8d9f8a9d8f8adf9a8df98a9d8f';
 const REFRESH_SECRET = process.env.REFRESH_SECRET;
@@ -90,5 +92,59 @@ export async function barberregisterHandler(req, res, next) {
     res.status(201).send({ id, barberUsername, barberName, barberSurname, barberPhone, available });
   } catch (error) {
     next(error);
+  }
+}
+
+export async function refreshHandler(req, res) {
+  try {
+    const refreshToken = req.cookies?.refreshToken;
+
+    // Check if the refresh token exists
+    if (!refreshToken) {
+      return res.status(401).json({ message: 'Refresh token is missing' });
+    }
+
+    // Verify the refresh token
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+    let user;
+
+    // Determine user type and fetch user data
+    if (decoded.userType === 'client') {
+      user = await getClient(decoded.id);
+    } else if (decoded.userType === 'barber') {
+      user = await getBarber(decoded.id);
+    } else {
+      return res.status(403).json({ message: 'Invalid user type' });
+    }
+
+    // If the user is not found
+    if (!user) {
+      return res.status(403).json({ message: 'User not found' });
+    }
+
+    // Generate new tokens
+    const newAccessToken = jwt.sign(
+      {
+        id: user.id,
+        userType: decoded.userType,
+        ...(decoded.userType === 'client' && { isVIP: user.isVIP }) // Include isVIP if the user is a client
+      },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: '15m' }
+    );
+
+    const newRefreshToken = jwt.sign(
+      { id: user.id, userType: decoded.userType },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    // Send the new tokens
+    res.cookie('refreshToken', newRefreshToken, { httpOnly: true, secure: true, sameSite: 'strict' });
+    return res.status(200).json({ accessToken: newAccessToken });
+  } catch (err) {
+    console.error(err);
+    return res.status(403).json({ message: 'Invalid or expired refresh token' });
   }
 }

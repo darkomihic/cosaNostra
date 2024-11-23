@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
 import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode  } from "jwt-decode";
 import useAuth from '../hooks/useAuth';
+import axios from 'axios';
+
 
 
 export default function Schedule() {
@@ -41,131 +42,130 @@ export default function Schedule() {
     }
     fetchServices();
   }, [auth.token]);
-  const fetchBarbers = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/barbers`, {
-        headers: {
-          'Authorization': `Bearer ${auth.token}`
-        }
-      });
-      const data = await response.json(); 
-      const filteredBarbers = Array.isArray(data) ? data.filter(barber => barber.available !== "None") : [];
-      setBarbers(filteredBarbers);
-      if (filteredBarbers.length === 0) {
-        setError('Nema slobodan frizer');
-      } else {
-        setError('');
-      }
-    } catch (error) {
-      console.error('Error fetching barbers:', error);
-      setError('Failed to fetch barbers');
-    }
-  };
-  const fetchBarbersNonVIP = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/barbers`, {
-        headers: {
-          'Authorization': `Bearer ${auth.token}`
-        }
-      });
-      const data = await response.json(); 
-      const filteredBarbers = Array.isArray(data) ? data.filter(barber => barber.available === "All") : [];
-      setBarbers(filteredBarbers);
-      if (filteredBarbers.length === 0) {
-        setError('Nema slobodan frizer');
-      } else {
-        setError('');
-      }
-    } catch (error) {
-      console.error('Error fetching barbers:', error);
-      setError('Failed to fetch barbers');
-    }
-  };
-  const fetchServices = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/services`);
-      const data = await response.json();
-      setServices(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error('Error fetching services:', error);
-      setError('Failed to fetch services');
-    }
-  };
-  const handleBarberAndServiceSelect = async (e) => {
-    e.preventDefault();
-
-    if (selectedBarber && selectedService && selectedDate) {
-      try {
-        const response = await fetch(`${apiUrl}/available-slots?barberId=${selectedBarber}&serviceId=${selectedService}&date=${selectedDate}`, {
-          headers: {
-            'Authorization': `Bearer ${auth.token}`
-          }
-        });
-        const data = await response.json();
-        setAvailableSlots(data);
-      } catch (error) {
-        console.error('Error fetching available slots:', error);
-        setError('Failed to fetch available slots');
-      }
-    }
-  };
-  const vipPayment = async () => {
-    if (!selectedService || !selectedBarber || !selectedDate || !selectedSlot) {
-      setError('Please select all required fields');
-      return;
-    }
-
-    console.log("Service duration: " + await getServiceDuration(selectedService));
 
 
-    const response = await fetch(`${apiUrl}/appointment`, {
-      method: 'POST',
+const fetchBarbers = async () => {
+  try {
+    const response = await axios.get(`${apiUrl}/barbers`, {
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${auth.token}`
+        'Authorization': `Bearer ${auth.token}`,
       },
-      body: JSON.stringify({
+    });
+    const filteredBarbers = Array.isArray(response.data) ? response.data.filter(barber => barber.available !== "None") : [];
+    setBarbers(filteredBarbers);
+    if (filteredBarbers.length === 0) {
+      setError('Nema slobodan frizer');
+    } else {
+      setError('');
+    }
+  } catch (error) {
+    console.error('Error fetching barbers:', error);
+    setError('Failed to fetch barbers');
+  }
+};
+
+const fetchBarbersNonVIP = async () => {
+  try {
+    const response = await axios.get(`${apiUrl}/barbers`, {
+      headers: {
+        'Authorization': `Bearer ${auth.token}`,
+      },
+    });
+    const filteredBarbers = Array.isArray(response.data) ? response.data.filter(barber => barber.available === "All") : [];
+    setBarbers(filteredBarbers);
+    if (filteredBarbers.length === 0) {
+      setError('Nema slobodan frizer');
+    } else {
+      setError('');
+    }
+  } catch (error) {
+    console.error('Error fetching barbers:', error);
+    setError('Failed to fetch barbers');
+  }
+};
+
+const fetchServices = async () => {
+  try {
+    const response = await axios.get(`${apiUrl}/services`);
+    setServices(Array.isArray(response.data) ? response.data : []);
+  } catch (error) {
+    console.error('Error fetching services:', error);
+    setError('Failed to fetch services');
+  }
+};
+
+const handleBarberAndServiceSelect = async (e) => {
+  e.preventDefault();
+
+  if (selectedBarber && selectedService && selectedDate) {
+    try {
+      const response = await axios.get(`${apiUrl}/available-slots`, {
+        params: {
+          barberId: selectedBarber,
+          serviceId: selectedService,
+          date: selectedDate,
+        },
+        headers: {
+          'Authorization': `Bearer ${auth.token}`,
+        },
+      });
+      setAvailableSlots(response.data);
+    } catch (error) {
+      console.error('Error fetching available slots:', error);
+      setError('Failed to fetch available slots');
+    }
+  }
+};
+
+const vipPayment = async () => {
+  if (!selectedService || !selectedBarber || !selectedDate || !selectedSlot) {
+    setError('Please select all required fields');
+    return;
+  }
+
+  console.log("Service duration: " + await getServiceDuration(selectedService));
+
+  try {
+    const response = await axios.post(
+      `${apiUrl}/appointment`,
+      {
         serviceId: selectedService,
         barberId: selectedBarber,
         appointmentDate: selectedDate,
         appointmentTime: dateToTime(selectedSlot),
         appointmentDuration: await getServiceDuration(selectedService),
         note: note,
-        clientId: decoded.id
+        clientId: decoded.id,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${auth.token}`,
+        },
+      }
+    );
 
-        
-      })
-
-      
-    });
-  
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Failed to create Checkout Session:', errorData.error);
-      return;
-    } else {
+    if (response.status === 200) {
       navigate('/appointments');
     }
-
-
+  } catch (error) {
+    console.error('Failed to create Checkout Session:', error.response?.data?.error || error);
   }
+};
 
-  const getServiceDuration = async (id) => {
-    try {
-      const response = await fetch(`${apiUrl}/services/${id}`, {
-        headers: {
-          'Authorization': `Bearer ${auth.token}`
-        }
-      });
-      const data = await response.json(); 
-      const duration = data.serviceDuration;
-      return duration;
-    } catch (error) {
-      console.error('Error fetching barbers:', error);
-      setError('Failed to fetch barbers');
-    }
-
+const getServiceDuration = async (id) => {
+  try {
+    const response = await axios.get(`${apiUrl}/services/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${auth.token}`,
+      },
+    });
+    return response.data.serviceDuration;
+  } catch (error) {
+    console.error('Error fetching service duration:', error);
+    setError('Failed to fetch barbers');
   }
+};
 
   /*const makePayment = async () => {
     if (!selectedService || !selectedBarber || !selectedDate || !selectedSlot) {
@@ -251,6 +251,8 @@ export default function Schedule() {
     }
     setAvailableSlots([]); // Clear available slots when the date is changed
   };
+
+  
   return (
     <div className='min-h-screen flex flex-col justify-between bg-neutral-950'>
       <div className='m-auto h-auto shadow-lg shadow-neutral-900 bg-black p-6 sm:max-w-[900px] rounded-2xl'>

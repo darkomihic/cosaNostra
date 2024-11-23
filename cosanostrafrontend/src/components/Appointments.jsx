@@ -4,6 +4,8 @@ import AppointmentCard from './AppointmentCard'; // Import your card component
 import Footer from './Footer';
 import { jwtDecode  } from "jwt-decode";
 import useAuth from '../hooks/useAuth';
+import axios from 'axios';
+
 
 export default function Appointments() {
   const { auth } = useAuth();
@@ -26,29 +28,34 @@ export default function Appointments() {
   }, [appointments]);
 
   const fetchAllAppointmentsForClient = async () => {
-    try {
-      const clientId = decoded.id;
-      console.log(`Fetching appointments for client ID: ${clientId}`);
-      const response = await fetch(`${apiUrl}/appointment-details-client/${clientId}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${auth.token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      console.log('Response status:', response.status); // Log the response status
+    const clientId = decoded.id;
+    console.log(`Fetching appointments for client ID: ${clientId}`);
   
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to fetch appointments: ${errorText}`);
-      }
-      const data = await response.json();
+    try {
+      const data = await fetchAppointments(clientId);
       setAppointments(data);
     } catch (error) {
       console.error('Error fetching appointments:', error);
       setError(error.message);
     }
+  };
+  
+  // Helper function to make the axios request
+  const fetchAppointments = async (clientId) => {
+    const url = `${apiUrl}/appointment-details-client/${clientId}`;
+    const headers = {
+      'Authorization': `Bearer ${auth.token}`,
+      'Content-Type': 'application/json',
+    };
+  
+    const response = await axios.get(url, { headers });
+    
+    // Check if the response status is not OK and throw an error
+    if (response.status !== 200) {
+      throw new Error(`Failed to fetch appointments: ${response.statusText}`);
+    }
+  
+    return response.data;
   };
   
 

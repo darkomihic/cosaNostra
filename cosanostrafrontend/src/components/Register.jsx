@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import shopicon from '../assets/ikona.jpg';
 import { useNavigate } from 'react-router-dom';
 import Footer from './Footer';
+import axios from 'axios';
+
 
 export default function Register() {
   const [clientUsername, setUsername] = useState('');
@@ -19,27 +21,40 @@ export default function Register() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
+  
     if (validateForm()) {
       console.log('Form submitted successfully');
       try {
-        const response = await fetch(`${apiUrl}/register`, {
-          method: 'POST',
+        // Send the registration request using axios
+        const response = await axios.post(`${apiUrl}/register`, {
+          clientUsername,
+          clientPassword,
+          clientName,
+          clientSurname,
+          clientPhone,
+          clientEmail,
+        }, {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ clientUsername, clientPassword, clientName, clientSurname, clientPhone, clientEmail }),
         });
   
-        if (response.ok) {
+        // Handle successful registration
+        if (response.status === 200) {
           navigate('/login');
-        } else {
-          const data = await response.json();
-          setError(data.message);
         }
       } catch (error) {
+        // Handle errors in the request or response
         console.error('Error:', error);
-        setError('An unexpected error occurred');
+  
+        // Check if error is related to response
+        if (error.response) {
+          // If there's an error response from the server
+          setError(error.response.data.message || 'An unexpected error occurred');
+        } else {
+          // If there was an issue with the request itself (e.g., network issue)
+          setError('An unexpected error occurred');
+        }
       }
     }
   };

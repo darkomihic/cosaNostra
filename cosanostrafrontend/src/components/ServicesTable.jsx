@@ -9,20 +9,17 @@ export default function ServicesTable() {
 
     console.log('API URL:', apiUrl); // Log the API URL being used
 
-    fetch(`${apiUrl}/services`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
+    // Using axios to fetch data
+    axios
+      .get(`${apiUrl}/services`)
+      .then((response) => {
+        setServices(response.data); // Set the fetched data
       })
-      .then(data => setServices(data))
-      .catch(error => console.error('Error fetching services:', error));
+      .catch((error) => {
+        console.error('Error fetching services:', error);
+        setError('Failed to fetch services'); // Set error state if there is an error
+      });
   }, []);
-
-  if (services.length === 0) {
-    return <p className="text-zinc-50">Loading services...</p>;
-  }
 
   return (
     <div className="container mx-auto p-4">

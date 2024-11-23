@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {useNavigate } from 'react-router-dom';
 import Footer from './Footer';
 import useAuth from '../hooks/useAuth';
-import jwtDecode from 'jwt-decode';
+import axios from 'axios';
 
 
 export default function BarberLogin() {
@@ -17,33 +17,42 @@ export default function BarberLogin() {
 
 
 
+
   const handleLogin = async (e) => {
     e.preventDefault();
+  
     try {
-      const response = await fetch(`${apiUrl}/barberlogin`, {
-        method: 'POST',
+      // Send the login request using axios
+      const response = await axios.post(`${apiUrl}/barberlogin`, {
+        barberUsername,
+        barberPassword
+      }, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ barberUsername, barberPassword }),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.message || 'Failed to login');
-        return;
-      }
-
-      const responseData = await response.json(); // Parse the response
-      const token = responseData.token; // Access the token
+  
+      // Handle successful login response
+      const { token } = response.data;  // Access the token directly from the response data
       console.log("token: " + token);
+      
       setAuth({ token });
       navigate('/barber-dashboard'); 
     } catch (error) {
+      // Handle errors in the request or response
       console.error('Error logging in:', error);
-      setError('Failed to login');
+      
+      // Check if error is related to response
+      if (error.response) {
+        // If there's an error response from the server
+        setError(error.response.data.message || 'Failed to login');
+      } else {
+        // If there was an issue with the request itself
+        setError('Failed to login');
+      }
     }
   };
+  
 
 
 

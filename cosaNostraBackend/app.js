@@ -7,7 +7,7 @@ import { generateClientTokenHandler, processPaymentHandler } from './controllers
 import { verifyToken } from './middleware/authMiddleware.js';
 import { isBarber, isClient } from './middleware/roleMiddleware.js';
 import { createCheckoutSessionHandler } from './controllers/stripeController.js';
-import { registerHandler, loginHandler, barberloginHandler, barberregisterHandler } from './controllers/authController.js';
+import { refreshHandler, registerHandler, loginHandler, barberloginHandler, barberregisterHandler } from './controllers/authController.js';
 import { getBarbersHandler, getBarberHandler, createBarberHandler, updateBarberHandler, deleteBarberHandler } from './controllers/barbersController.js';
 import { getServicePriceHandler, getServicesHandler, getServiceHandler, createServiceHandler, updateServiceHandler, deleteServiceHandler } from './controllers/servicesController.js';
 import { getClientsHandler, getClientHandler, createClientHandler, updateClientHandler, updateClientByUsernameHandler, deleteClientHandler } from './controllers/clientsController.js';
@@ -37,7 +37,7 @@ app.post('/register', registerHandler);
 app.post('/login', loginHandler);
 //app.post('/barberregister', barberregisterHandler);
 app.post('/barberlogin', barberloginHandler);
-//app.post('/refresh', refreshTokenHandler);
+app.post('/refresh', refreshHandler);
 //app.post('/logout', logoutHandler);
 
 app.get('/barbers', verifyToken, getBarbersHandler);
