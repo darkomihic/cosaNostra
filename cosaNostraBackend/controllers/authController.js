@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import pool from '../models/db.js';
 import { authenticateBarber, authenticateClient } from '../services/authService.js';
 import { getClient } from '../services/clientsService.js'; // Replace with your actual service imports
-import { getBarber } from '../services/baebersService.js'; // Replace with your actual service imports
+import { getBarber } from '../services/barbersService.js'; // Replace with your actual service imports
 
 
 const SECRET_KEY = process.env.SECRET_KEY || '0d9f9a8d9a8df8a9df8a9d8f8adf9a8d9f8a9d8f8adf9a8df98a9d8f';
