@@ -1,14 +1,14 @@
 import { createContext, useState, useEffect } from "react";
 import Cookies from "js-cookie"; // Import js-cookie
 import axios from "axios";
+import { jwtDecode } from "jwt-decode"; // Import jwt-decode
+
 
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({
-    token: null,
-    user: null,
-  });
+    token: null  });
   const [persist, setPersist] = useState(true);
 
   // Function to refresh the token by calling the /refresh endpoint
@@ -18,11 +18,16 @@ export const AuthProvider = ({ children }) => {
       const newToken = response.data.accessToken;
 
       if (newToken) {
+
+        const decodedToken = jwtDecode(newToken);
+        console.log("Decoded Token:", decodedToken);
+
+
         // Store the token in cookies
         Cookies.set("token", newToken, { expires: 7 }); // Store for 7 days
         setAuth((prev) => ({
           ...prev,
-          token: newToken,
+          token: newToken
         }));
         console.log("Token refreshed successfully:", newToken);
       }

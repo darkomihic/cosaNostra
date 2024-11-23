@@ -162,7 +162,7 @@ export async function refreshHandler(req, res) {
 
     const newAccessToken = jwt.sign(
       {
-        id: user.id,
+        id: decoded.id,
         userType: decoded.userType,
         ...(decoded.userType === 'client' && { isVIP: user.isVIP })
       },
