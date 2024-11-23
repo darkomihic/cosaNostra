@@ -165,18 +165,6 @@ export async function refreshHandler(req, res) {
       { expiresIn: '15m' }
     );
 
-    const newRefreshToken = jwt.sign(
-      { id: user.id, userType: decoded.userType },
-      REFRESH_SECRET,
-      { expiresIn: '7d' }
-    );
-
-    res.cookie('refreshToken', newRefreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-    });
-
     return res.status(200).json({ accessToken: newAccessToken });
   } catch (err) {
     console.error(err);
