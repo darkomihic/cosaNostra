@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import AppointmentCard from './AppointmentCard'; // Import your card component
 import Footer from './Footer';
 import { jwtDecode  } from "jwt-decode";
-import useAuth from '../hooks/useAuth';
+import useAuth from '../hooks/useAuth';  // Import the custom hook
 import axiosPrivate from '../api/axiosInstance';  // axios instance with interceptors applied
 
 

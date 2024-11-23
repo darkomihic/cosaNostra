@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import axiosPrivate from "../api/axiosInstance";  // Your axios instance
 import useRefreshToken from "./useRefreshToken";  // Custom hook for refreshing token
-import useAuth from "./useAuth";  // Custom hook for auth
+import useAuth from '../hooks/useAuth';  // Import the custom hook
 
 const useAxiosPrivate = () => {
   const refresh = useRefreshToken();
@@ -49,6 +49,8 @@ const useAxiosPrivate = () => {
       axiosPrivate.interceptors.response.eject(responseIntercept);
     };
   }, [auth, refresh]); // Run whenever auth or refresh changes
+
+  return axiosPrivate;
 
 };
 

@@ -1,57 +1,36 @@
-import React, { useState } from 'react'; // Ensure useState is imported here
+import React from 'react';
 import Login from "./components/Login";
-import Register from "./components/Register"
+import Register from "./components/Register";
 import HeroLandingPage from "./components/HeroLandingPage";
 import Schedule from "./components/Schedule";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import BarberLogin from "./components/BarberLogin";
-import BarberDashboard from "./components/barberDashboard/BarberDashboard";
-import Success from "./components/Success"
-import Cancel from "./components/Cancel"
-import Appointments from "./components/Appointments"
+import BarberDashboard from "./components/BarberDashboard";
+import Success from "./components/Success";
+import Cancel from "./components/Cancel";
+import Appointments from "./components/Appointments";
 import Navbar from "./components/Navbar";
-import { AuthProvider } from './context/AuthProvider'; // Adjust the import path
-import useAxiosPrivate from "./hooks/useAxiosPrivate";
-
+import useAuth from './hooks/useAuth';  // Import the custom hook
 
 function App() {
-
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
-
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setIsLoggedIn(false);
-  };
-
-  useAxiosPrivate();  // This ensures that interceptors are applied to all API requests
-
-
+  const { auth, login, logout } = useAuth();  // Access auth context
 
   return (
-    <>
-      <AuthProvider>  
-          <Router>
-            <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
-            <useAxiosPrivate></useAxiosPrivate>
-            <Routes>
-              <Route path="/" element={<HeroLandingPage />} />
-              <Route path="/login" element={<Login onLogin={handleLogin} />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/schedule" element={<Schedule />} />
-              <Route path="/barber-login" element={<BarberLogin />} />
-              <Route path="/barber-dashboard" element={<BarberDashboard />} />
-              <Route path="/cancel" element={<Cancel />} />
-              <Route path="/success" element={<Success />} />
-              <Route path="/appointments" element={<Appointments />} />
-            </Routes>
-          </Router>
-        </AuthProvider>
-    </>
+    <Router>
+      <Navbar isLoggedIn={!!auth.token} handleLogout={logout} /> {/* Use the auth context to check if logged in */}
+      <Routes>
+        <Route path="/" element={<HeroLandingPage />} />
+        <Route path="/login" element={<Login onLogin={login} />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/schedule" element={<Schedule />} />
+        <Route path="/barber-login" element={<BarberLogin />} />
+        <Route path="/barber-dashboard" element={<BarberDashboard />} />
+        <Route path="/cancel" element={<Cancel />} />
+        <Route path="/success" element={<Success />} />
+        <Route path="/appointments" element={<Appointments />} />
+      </Routes>
+    </Router>
   );
 }
 
-export default App; 
+export default App;

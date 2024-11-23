@@ -3,13 +3,14 @@ import React, { useState, useEffect } from 'react';
 import newLogo from '../assets/ikona_processed.jpg';
 import Map from '../assets/mappin.png';
 import Phone from '../assets/telephone.png';
-import useAuth from '../hooks/useAuth';
+import useAuth from '../hooks/useAuth';  // Import the custom hook
 import ServicesTable from './ServicesTable';
 import Footer from './Footer';
-import axiosPrivate from '../api/axiosInstance';  // axios instance with interceptors applied
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
 export default function HeroLandingPage() {
   const { auth } = useAuth();
+  const axiosPrivate = useAxiosPrivate();
 
   const workingHours = [
     { day: 'Monday', hours: '9:00 AM - 6:00 PM' },
@@ -26,21 +27,27 @@ export default function HeroLandingPage() {
   const apiUrl = process.env.REACT_APP_API;
 
   useEffect(() => {
-
-    console.log("HLP token: " + auth.token);  // Access the token or any other properties from auth
-
-    // Fetch services using axiosPrivate (which already has interceptors applied)
     const fetchServices = async () => {
+
+      console.log(axiosPrivate);
+
+      if (!axiosPrivate || !apiUrl) {
+        console.error("axiosPrivate or apiUrl is undefined.");
+        return;
+      }
+  
       try {
         const response = await axiosPrivate.get(`${apiUrl}/services`);
-        setServices(response.data); // Set services data from the response
+        console.log("Fetched services:", response.data);
+        setServices(response.data);
       } catch (error) {
-        console.error('Error fetching services:', error);
+        console.error("Error fetching services:", error);
       }
     };
-
-    fetchServices(); // Call the function to fetch services
-  }, []);
+  
+    fetchServices();
+  }, [axiosPrivate, apiUrl]); // Ensure all dependencies are included
+  
 
   useEffect(() => {
     if (auth.token) {

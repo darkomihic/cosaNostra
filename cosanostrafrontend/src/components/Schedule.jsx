@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode  } from "jwt-decode";
-import useAuth from '../hooks/useAuth';
+import useAuth from '../hooks/useAuth';  // Import the custom hook
 import axiosPrivate from '../api/axiosInstance';  // axios instance with interceptors applied
 
 

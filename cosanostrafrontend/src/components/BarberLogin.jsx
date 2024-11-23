@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {useNavigate } from 'react-router-dom';
 import Footer from './Footer';
-import useAuth from '../hooks/useAuth';
+import useAuth from '../hooks/useAuth';  // Import the custom hook
 import axiosPrivate from '../api/axiosInstance';  // axios instance with interceptors applied
 
 

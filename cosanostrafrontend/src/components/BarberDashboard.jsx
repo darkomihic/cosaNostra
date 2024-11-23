@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { jwtDecode } from "jwt-decode";
-import useAuth from '../../hooks/useAuth';
+import useAuth from '../hooks/useAuth';  // Import the custom hook
 
 export default function BarberDashboard() {
   const [appointments, setAppointments] = useState([]);

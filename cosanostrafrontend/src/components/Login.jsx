@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import shopicon from '../assets/ikona.jpg';
 import { Link, useNavigate } from 'react-router-dom';
 import Footer from './Footer';
-import useAuth from '../hooks/useAuth';
+import useAuth from '../hooks/useAuth'; // Ensure correct path
 import axiosPrivate from '../api/axiosInstance';  // axios instance with interceptors applied
 
 
@@ -32,12 +32,13 @@ export default function Login({ onLogin }) {
       });
   
       // Handle successful login response
-      const { token } = response.data;  // Access the token directly from the response data
+      const { token, refreshToken } = response.data;
       console.log("token: " + token);
-      console.log("reponse data: " + response.data);
+      console.log("cookie token: " + refreshToken);
 
       setAuth({ token });
-      onLogin();  // Trigger re-render of Navbar
+      
+      //onLogin();  // Trigger re-render of Navbar
       navigate('/'); 
     } catch (error) {
       // Handle errors in the request or response
