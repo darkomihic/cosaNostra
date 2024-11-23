@@ -3,6 +3,7 @@ import fs from 'fs';
 import express from 'express';
 import cors from 'cors';
 import Stripe from 'stripe';
+import cookieParser from 'cookie-parser';
 import { generateClientTokenHandler, processPaymentHandler } from './controllers/braintreeController.js';
 import { verifyToken } from './middleware/authMiddleware.js';
 import { isBarber, isClient } from './middleware/roleMiddleware.js';
@@ -27,6 +28,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(cookieParser());
 
 
 app.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhookHandler);
