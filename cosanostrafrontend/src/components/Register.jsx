@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import shopicon from '../assets/ikona.jpg';
 import { useNavigate } from 'react-router-dom';
 import Footer from './Footer';
-import axios from 'axios';
+import axiosPrivate from '../api/axiosInstance';  // axios instance with interceptors applied
 
 
 export default function Register() {
@@ -26,7 +26,7 @@ export default function Register() {
       console.log('Form submitted successfully');
       try {
         // Send the registration request using axios
-        const response = await axios.post(`${apiUrl}/register`, {
+        const response = await axiosPrivate.post(`${apiUrl}/register`, {
           clientUsername,
           clientPassword,
           clientName,

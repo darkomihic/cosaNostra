@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import axiosPrivate from '../api/axiosInstance';  // axios instance with interceptors applied
+
 
 export default function ServicesTable() {
   const [services, setServices] = useState([]);
@@ -10,14 +12,14 @@ export default function ServicesTable() {
     console.log('API URL:', apiUrl); // Log the API URL being used
 
     // Using axios to fetch data
-    axios
+    axiosPrivate
       .get(`${apiUrl}/services`)
       .then((response) => {
         setServices(response.data); // Set the fetched data
       })
       .catch((error) => {
         console.error('Error fetching services:', error);
-        setError('Failed to fetch services'); // Set error state if there is an error
+        return <p className="text-zinc-50">Loading services...</p>;
       });
   }, []);
 

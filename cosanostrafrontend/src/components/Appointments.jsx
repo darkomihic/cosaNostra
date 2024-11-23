@@ -4,7 +4,7 @@ import AppointmentCard from './AppointmentCard'; // Import your card component
 import Footer from './Footer';
 import { jwtDecode  } from "jwt-decode";
 import useAuth from '../hooks/useAuth';
-import axios from 'axios';
+import axiosPrivate from '../api/axiosInstance';  // axios instance with interceptors applied
 
 
 export default function Appointments() {
@@ -48,7 +48,7 @@ export default function Appointments() {
       'Content-Type': 'application/json',
     };
   
-    const response = await axios.get(url, { headers });
+    const response = await axiosPrivate.get(url, { headers });
     
     // Check if the response status is not OK and throw an error
     if (response.status !== 200) {

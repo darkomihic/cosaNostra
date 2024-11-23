@@ -1,3 +1,4 @@
+// src/components/HeroLandingPage.jsx
 import React, { useState, useEffect } from 'react';
 import newLogo from '../assets/ikona_processed.jpg';
 import Map from '../assets/mappin.png';
@@ -5,8 +6,7 @@ import Phone from '../assets/telephone.png';
 import useAuth from '../hooks/useAuth';
 import ServicesTable from './ServicesTable';
 import Footer from './Footer';
-import axios from 'axios';
-
+import axiosPrivate from '../api/axiosInstance';  // axios instance with interceptors applied
 
 export default function HeroLandingPage() {
   const { auth } = useAuth();
@@ -25,21 +25,23 @@ export default function HeroLandingPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const apiUrl = process.env.REACT_APP_API;
 
-
   useEffect(() => {
-    // Fetch services using axios
+
+    console.log("HLP token: " + auth.token);  // Access the token or any other properties from auth
+
+    // Fetch services using axiosPrivate (which already has interceptors applied)
     const fetchServices = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/services`);
+        const response = await axiosPrivate.get(`${apiUrl}/services`);
         setServices(response.data); // Set services data from the response
       } catch (error) {
         console.error('Error fetching services:', error);
       }
     };
-  
+
     fetchServices(); // Call the function to fetch services
   }, []);
-  
+
   useEffect(() => {
     if (auth.token) {
       setIsLoggedIn(true);
@@ -47,6 +49,7 @@ export default function HeroLandingPage() {
       setIsLoggedIn(false);
     }
   }, [auth.token]);
+
   return (
     <div className="bg-black min-h-screen flex flex-col justify-between">
       <div>
@@ -89,7 +92,7 @@ export default function HeroLandingPage() {
         </section>
         <ServicesTable />
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 }

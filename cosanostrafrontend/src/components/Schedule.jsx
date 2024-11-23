@@ -3,7 +3,7 @@ import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode  } from "jwt-decode";
 import useAuth from '../hooks/useAuth';
-import axios from 'axios';
+import axiosPrivate from '../api/axiosInstance';  // axios instance with interceptors applied
 
 
 
@@ -46,7 +46,7 @@ export default function Schedule() {
 
 const fetchBarbers = async () => {
   try {
-    const response = await axios.get(`${apiUrl}/barbers`, {
+    const response = await axiosPrivate.get(`${apiUrl}/barbers`, {
       headers: {
         'Authorization': `Bearer ${auth.token}`,
       },
@@ -66,7 +66,7 @@ const fetchBarbers = async () => {
 
 const fetchBarbersNonVIP = async () => {
   try {
-    const response = await axios.get(`${apiUrl}/barbers`, {
+    const response = await axiosPrivate.get(`${apiUrl}/barbers`, {
       headers: {
         'Authorization': `Bearer ${auth.token}`,
       },
@@ -86,7 +86,7 @@ const fetchBarbersNonVIP = async () => {
 
 const fetchServices = async () => {
   try {
-    const response = await axios.get(`${apiUrl}/services`);
+    const response = await axiosPrivate.get(`${apiUrl}/services`);
     setServices(Array.isArray(response.data) ? response.data : []);
   } catch (error) {
     console.error('Error fetching services:', error);
@@ -99,7 +99,7 @@ const handleBarberAndServiceSelect = async (e) => {
 
   if (selectedBarber && selectedService && selectedDate) {
     try {
-      const response = await axios.get(`${apiUrl}/available-slots`, {
+      const response = await axiosPrivate.get(`${apiUrl}/available-slots`, {
         params: {
           barberId: selectedBarber,
           serviceId: selectedService,
@@ -126,7 +126,7 @@ const vipPayment = async () => {
   console.log("Service duration: " + await getServiceDuration(selectedService));
 
   try {
-    const response = await axios.post(
+    const response = await axiosPrivate.post(
       `${apiUrl}/appointment`,
       {
         serviceId: selectedService,
@@ -155,7 +155,7 @@ const vipPayment = async () => {
 
 const getServiceDuration = async (id) => {
   try {
-    const response = await axios.get(`${apiUrl}/services/${id}`, {
+    const response = await axiosPrivate.get(`${apiUrl}/services/${id}`, {
       headers: {
         'Authorization': `Bearer ${auth.token}`,
       },

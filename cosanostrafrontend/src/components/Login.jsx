@@ -3,7 +3,7 @@ import shopicon from '../assets/ikona.jpg';
 import { Link, useNavigate } from 'react-router-dom';
 import Footer from './Footer';
 import useAuth from '../hooks/useAuth';
-import axios from 'axios';
+import axiosPrivate from '../api/axiosInstance';  // axios instance with interceptors applied
 
 
 
@@ -22,7 +22,7 @@ export default function Login({ onLogin }) {
   
     try {
       // Send the login request using axios
-      const response = await axios.post(`${apiUrl}/login`, {
+      const response = await axiosPrivate.post(`${apiUrl}/login`, {
         clientUsername,
         clientPassword
       }, {
@@ -34,7 +34,8 @@ export default function Login({ onLogin }) {
       // Handle successful login response
       const { token } = response.data;  // Access the token directly from the response data
       console.log("token: " + token);
-      
+      console.log("reponse data: " + response.data);
+
       setAuth({ token });
       onLogin();  // Trigger re-render of Navbar
       navigate('/'); 

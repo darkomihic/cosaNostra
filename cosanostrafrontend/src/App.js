@@ -11,6 +11,7 @@ import Cancel from "./components/Cancel"
 import Appointments from "./components/Appointments"
 import Navbar from "./components/Navbar";
 import { AuthProvider } from './context/AuthProvider'; // Adjust the import path
+import useAxiosPrivate from "./hooks/useAxiosPrivate";
 
 
 function App() {
@@ -26,12 +27,16 @@ function App() {
     setIsLoggedIn(false);
   };
 
+  useAxiosPrivate();  // This ensures that interceptors are applied to all API requests
+
+
 
   return (
     <>
       <AuthProvider>  
           <Router>
             <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
+            <useAxiosPrivate></useAxiosPrivate>
             <Routes>
               <Route path="/" element={<HeroLandingPage />} />
               <Route path="/login" element={<Login onLogin={handleLogin} />} />

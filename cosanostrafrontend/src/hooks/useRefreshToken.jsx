@@ -1,25 +1,20 @@
 import useAuth from './useAuth';
+import axios from '../api/axiosInstance';
 
-const apiUrl = process.env.REACT_APP_API;
 
 const useRefreshToken = () => {
   const { setAuth } = useAuth();
 
   const refresh = async () => {
-    const response = await fetch(`${apiUrl}/refresh`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include'
+    const response = await axios.post('/refresh', {
     });
     setAuth(prev => {
       console.log(JSON.stringify(prev));
-      console.log(response.data.accessToken);
-      return { ...prev, accessToken: response.data.accessToken }
+      console.log(response.data.token);
+      return { ...prev, token: response.data.token }
     });
 
-    return response.data.accessToken;
+    return response.data.token;
   }
 
   return refresh;

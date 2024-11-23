@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {useNavigate } from 'react-router-dom';
 import Footer from './Footer';
 import useAuth from '../hooks/useAuth';
-import axios from 'axios';
+import axiosPrivate from '../api/axiosInstance';  // axios instance with interceptors applied
 
 
 export default function BarberLogin() {
@@ -23,7 +23,7 @@ export default function BarberLogin() {
   
     try {
       // Send the login request using axios
-      const response = await axios.post(`${apiUrl}/barberlogin`, {
+      const response = await axiosPrivate.post(`${apiUrl}/barberlogin`, {
         barberUsername,
         barberPassword
       }, {
