@@ -161,7 +161,7 @@ export async function refreshHandler(req, res) {
         userType: decoded.userType,
         ...(decoded.userType === 'client' && { isVIP: user.isVIP })
       },
-      process.env.ACCESS_TOKEN_SECRET,
+      process.env.SECRET_KEY,
       { expiresIn: '15m' }
     );
 
