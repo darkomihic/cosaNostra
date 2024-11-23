@@ -29,7 +29,6 @@ export default function HeroLandingPage() {
   useEffect(() => {
     const fetchServices = async () => {
 
-      console.log(axiosPrivate);
 
       if (!axiosPrivate || !apiUrl) {
         console.error("axiosPrivate or apiUrl is undefined.");
@@ -38,7 +37,6 @@ export default function HeroLandingPage() {
   
       try {
         const response = await axiosPrivate.get(`${apiUrl}/services`);
-        console.log("Fetched services:", response.data);
         setServices(response.data);
       } catch (error) {
         console.error("Error fetching services:", error);

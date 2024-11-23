@@ -1,19 +1,57 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
+import Cookies from "js-cookie"; // Import js-cookie
+import axios from "axios";
 
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-    const [auth, setAuth] = useState({
-      token: null,   // Make sure token is null initially
-      user: null,    // Set user as null if there's no user
-    });
-  
-    return (
-      <AuthContext.Provider value={{ auth, setAuth }}>
-        {children}
-      </AuthContext.Provider>
-    );
+  const [auth, setAuth] = useState({
+    token: null,
+    user: null,
+  });
+  const [persist, setPersist] = useState(true);
+
+  // Function to refresh the token by calling the /refresh endpoint
+  const refreshToken = async () => {
+    try {
+      const response = await axios.get("/refresh"); // Your refresh route
+      const newToken = response.data.accessToken;
+
+      if (newToken) {
+        // Store the token in cookies
+        Cookies.set("token", newToken, { expires: 7 }); // Store for 7 days
+        setAuth((prev) => ({
+          ...prev,
+          token: newToken,
+        }));
+        console.log("Token refreshed successfully:", newToken);
+      }
+    } catch (err) {
+      console.error("Error refreshing token:", err);
+      setAuth({ token: null, user: null }); // Clear token if refresh fails
+    }
   };
-  
+
+  // Read the token from cookies on initial load
+  useEffect(() => {
+    const storedToken = Cookies.get("token"); // Read token from cookies
+
+    if (storedToken) {
+      setAuth({
+        token: storedToken,
+        user: null, // Optionally, fetch and set user info
+      });
+      console.log("Token loaded from cookies:", storedToken);
+    } else {
+      refreshToken(); // If no token, attempt to refresh it
+    }
+  }, []); // Run this only on initial mount
+
+  return (
+    <AuthContext.Provider value={{ auth, setAuth, persist, setPersist }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
 export default AuthContext;

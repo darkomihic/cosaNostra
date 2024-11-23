@@ -11,6 +11,7 @@ import Cancel from "./components/Cancel";
 import Appointments from "./components/Appointments";
 import Navbar from "./components/Navbar";
 import useAuth from './hooks/useAuth';  // Import the custom hook
+import PersistLogin from './components/PersistLogin';
 
 function App() {
   const { auth, login, logout } = useAuth();  // Access auth context
@@ -22,12 +23,14 @@ function App() {
         <Route path="/" element={<HeroLandingPage />} />
         <Route path="/login" element={<Login onLogin={login} />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/schedule" element={<Schedule />} />
         <Route path="/barber-login" element={<BarberLogin />} />
-        <Route path="/barber-dashboard" element={<BarberDashboard />} />
-        <Route path="/cancel" element={<Cancel />} />
-        <Route path="/success" element={<Success />} />
-        <Route path="/appointments" element={<Appointments />} />
+        <Route element={<PersistLogin/>}> 
+          <Route path="/schedule" element={<Schedule />} />
+          <Route path="/barber-dashboard" element={<BarberDashboard />} />
+          <Route path="/cancel" element={<Cancel />} />
+          <Route path="/success" element={<Success />} />
+          <Route path="/appointments" element={<Appointments />} />
+        </Route>
       </Routes>
     </Router>
   );

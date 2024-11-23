@@ -1,6 +1,7 @@
 import https from 'https';
 import fs from 'fs';
 import express from 'express';
+import path from 'path';
 import cors from 'cors';
 import Stripe from 'stripe';
 import cookieParser from 'cookie-parser';
@@ -39,7 +40,13 @@ app.post('/register', registerHandler);
 app.post('/login', loginHandler);
 //app.post('/barberregister', barberregisterHandler);
 app.post('/barberlogin', barberloginHandler);
-app.post('/refresh', refreshHandler);
+app.post('/refresh', (req, res) => {
+  // Log the cookies sent with the request
+  console.log("Cookies received in /refresh request:", req.cookies);
+
+  // Call the refreshHandler function if it's separate
+  refreshHandler(req, res);
+});
 //app.post('/logout', logoutHandler);
 
 app.get('/barbers', verifyToken, getBarbersHandler);
@@ -91,6 +98,12 @@ app.post('/braintree/checkout', processPaymentHandler);  // Process payment
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
+});
+
+
+// Catch-all handler for all non-API routes (returns index.html for React Router to handle)
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "build", "index.html"));
 });
 
 // Load SSL certificate and key
