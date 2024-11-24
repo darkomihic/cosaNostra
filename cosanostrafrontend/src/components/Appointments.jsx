@@ -29,8 +29,6 @@ export default function Appointments() {
   
       if (decoded?.id) {
         fetchAllAppointmentsForClient();
-        const result = filterPastAppointments(appointments);
-        setFilteredAppointments(result);
       } else {
         console.error("Decoded token does not contain 'id'");
       }
@@ -39,18 +37,21 @@ export default function Appointments() {
     }
   }, [auth.token]);
   
-
-
-  
   const fetchAllAppointmentsForClient = async () => {
     try {
       const data = await fetchAppointments(decoded.id); // Make sure decoded is available here
       setAppointments(data);
+      const result = filterPastAppointments(data); // Filter after fetching the data
+      setFilteredAppointments(result);
     } catch (error) {
       console.error('Error fetching appointments:', error);
       setError(error.message);
     }
   };
+  
+
+
+
   const fetchAppointments = async (clientId) => {
     const url = `${apiUrl}/appointment-details-client/${clientId}`;
     try {

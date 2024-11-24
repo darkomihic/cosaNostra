@@ -1,4 +1,3 @@
-// src/components/HeroLandingPage.jsx
 import React, { useState, useEffect } from 'react';
 import newLogo from '../assets/ikona_processed.jpg';
 import Map from '../assets/mappin.png';
@@ -12,29 +11,19 @@ export default function HeroLandingPage() {
   const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
 
-  const workingHours = [
-    { day: 'Monday', hours: '9:00 AM - 6:00 PM' },
-    { day: 'Tuesday', hours: '9:00 AM - 6:00 PM' },
-    { day: 'Wednesday', hours: '9:00 AM - 6:00 PM' },
-    { day: 'Thursday', hours: '9:00 AM - 6:00 PM' },
-    { day: 'Friday', hours: '9:00 AM - 8:00 PM' },
-    { day: 'Saturday', hours: '10:00 AM - 4:00 PM' },
-    { day: 'Sunday', hours: 'Closed' },
-  ];
-
   const [services, setServices] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const apiUrl = process.env.REACT_APP_API;
 
+  // Fetch services from the API
   useEffect(() => {
     const fetchServices = async () => {
-
-
       if (!axiosPrivate || !apiUrl) {
         console.error("axiosPrivate or apiUrl is undefined.");
         return;
       }
-  
+
       try {
         const response = await axiosPrivate.get(`${apiUrl}/services`);
         setServices(response.data);
@@ -42,11 +31,11 @@ export default function HeroLandingPage() {
         console.error("Error fetching services:", error);
       }
     };
-  
-    fetchServices();
-  }, [axiosPrivate, apiUrl]); // Ensure all dependencies are included
-  
 
+    fetchServices();
+  }, [axiosPrivate, apiUrl]);
+
+  // Check login status based on token
   useEffect(() => {
     if (auth.token) {
       setIsLoggedIn(true);
@@ -90,12 +79,18 @@ export default function HeroLandingPage() {
                 069123456
               </p>
             </div>
-            <div className="lg:hidden mt-8 flex justify-center items-center">
-              <img src={newLogo} alt="Logo" className="w-48 h-auto" />
-            </div>
           </div>
         </section>
-        <ServicesTable />
+
+        {/* Always show services */}
+        <ServicesTable services={services} />
+
+        {/* Show login message if not logged in */}
+        {!isLoggedIn && (
+          <div className="text-center text-2xl text-zinc-200 mt-8">
+            <p>Please log in to access all features.</p>
+          </div>
+        )}
       </div>
       <Footer />
     </div>

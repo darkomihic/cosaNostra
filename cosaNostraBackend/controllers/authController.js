@@ -54,6 +54,17 @@ export async function loginHandler(req, res) {
   res.json({ auth: true, accessToken });
 }
 
+export async function logoutHandler(req, res) {
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: true, // Use true in production to ensure cookies are sent over HTTPS
+    sameSite: 'None', // Adjust as per your frontend configuration
+});
+
+return res.status(200).json({ message: 'Logged out successfully.' });
+}
+
+
 // Barber login handler
 export async function barberloginHandler(req, res) {
   const { barberUsername, barberPassword } = req.body;
@@ -133,6 +144,7 @@ export async function barberregisterHandler(req, res, next) {
     next(error);
   }
 }
+
 
 // Refresh token handler
 export async function refreshHandler(req, res) {
