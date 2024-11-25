@@ -62,6 +62,8 @@ export async function logoutHandler(req, res) {
     path: '/'
 });
 
+req.session.destroy();
+
 return res.status(200).json({ message: 'Logged out successfully.' });
 }
 
