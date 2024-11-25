@@ -55,11 +55,19 @@ export async function loginHandler(req, res) {
 }
 
 export async function logoutHandler(req, res) {
-  res.clearCookie('refreshToken', {
-    httpOnly: true,
-    secure: true, // Use true in production to ensure cookies are sent over HTTPS
-    sameSite: 'None', // Adjust as per your frontend configuration
-    path: '/'
+
+  const { refreshToken } = createToken({ 
+    id: user.clientId, 
+    userType: 'client', 
+    isVIP: user.isVIP 
+  });
+
+
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true, 
+    secure: true,
+    sameSite: "none",    
+    expires: new Date(1)
 });
 
 req.session.destroy();
