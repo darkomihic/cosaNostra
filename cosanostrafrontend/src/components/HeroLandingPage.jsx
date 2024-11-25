@@ -79,18 +79,14 @@ export default function HeroLandingPage() {
                 069123456
               </p>
             </div>
+            <div className="lg:hidden mt-8 flex justify-center items-center">
+              <img src={newLogo} alt="Logo" className="w-48 h-auto" />
+            </div>
           </div>
         </section>
 
         {/* Always show services */}
         <ServicesTable services={services} />
-
-        {/* Show login message if not logged in */}
-        {!isLoggedIn && (
-          <div className="text-center text-2xl text-zinc-200 mt-8">
-            <p>Please log in to access all features.</p>
-          </div>
-        )}
       </div>
       <Footer />
     </div>
