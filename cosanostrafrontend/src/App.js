@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Login from "./components/Login";
 import Register from "./components/Register";
 import HeroLandingPage from "./components/HeroLandingPage";
@@ -14,14 +14,14 @@ import useAuth from './hooks/useAuth';  // Import the custom hook
 import PersistLogin from './components/PersistLogin';
 
 function App() {
-  const { auth, login, logout } = useAuth();  // Access auth context
+  const [isAuthenticated, setIsAuthenticated] = useState(true); // Assume the user is logged in initially
 
   return (
     <Router>
-      <Navbar isLoggedIn={!!auth.token} handleLogout={logout} /> {/* Use the auth context to check if logged in */}
+      <Navbar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />
       <Routes>
         <Route path="/" element={<HeroLandingPage />} />
-        <Route path="/login" element={<Login onLogin={login} />} />
+        <Route path="/login" element={<Login isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated}/>} />
         <Route path="/register" element={<Register />} />
         <Route path="/barber-login" element={<BarberLogin />} />
         <Route element={<PersistLogin/>}> 

@@ -7,7 +7,7 @@ import axios from '../api/axiosInstance';
 
 
 
-export default function Login({ onLogin }) {
+export default function Login({setIsAuthenticated}) {
   const [clientUsername, setUsername] = useState('');
   const [clientPassword, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -36,10 +36,11 @@ export default function Login({ onLogin }) {
       // Handle successful login response
       const { accessToken } = response.data; // Directly access the accessToken from response.data
       console.log("accessToken: " + accessToken); // Log accessToken to check
-  
+      
       // Store the accessToken in your auth state
       setAuth({ token: accessToken });
-      
+      setIsAuthenticated(true); // Update the state on successful logout
+
       //onLogin();  // Trigger re-render of Navbar
       navigate('/'); 
     } catch (error) {

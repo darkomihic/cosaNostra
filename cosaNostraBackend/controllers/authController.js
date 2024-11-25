@@ -59,6 +59,7 @@ export async function logoutHandler(req, res) {
     httpOnly: true,
     secure: true, // Use true in production to ensure cookies are sent over HTTPS
     sameSite: 'None', // Adjust as per your frontend configuration
+    path: '/'
 });
 
 return res.status(200).json({ message: 'Logged out successfully.' });
@@ -161,7 +162,6 @@ export async function refreshHandler(req, res) {
     let user;
     if (decoded.userType === 'client') {
       user = await getClient(decoded.id);
-      console.log("Client id : " + decoded.id)
     } else if (decoded.userType === 'barber') {
       user = await getBarber(decoded.id);
     } else {

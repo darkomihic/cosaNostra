@@ -2,16 +2,26 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import "../assets/css/style.css"; // Ensure to import your CSS file
 import knglava from '../assets/knglava.jpg';
+import axios from 'axios';
 
-export default function Navbar({ isLoggedIn, handleLogout }) {
+
+export default function Navbar({ isAuthenticated, setIsAuthenticated }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const apiUrl = process.env.REACT_APP_API;
 
-  const handleLogoutClick = () => {
-    handleLogout();
-    navigate('/');
-  };
 
+  const handleLogoutClick = async (e) => {
+    e.preventDefault();
+
+    try {
+        await axios.post('/logout', {}, { withCredentials: true });
+        setIsAuthenticated(false); // Update the state on successful logout
+        navigate("/");
+    } catch (error) {
+        console.error('Logout failed:', error);
+    }
+};
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -34,11 +44,11 @@ export default function Navbar({ isLoggedIn, handleLogout }) {
 
   <ul className={`fixed top-0 right-0 h-full w-3/4 lg:w-auto bg-zinc-900 lg:bg-transparent transition-transform transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} lg:translate-x-0 lg:static lg:flex lg:flex-row lg:space-x-4 lg:items-center lg:h-auto`}>
     <li className="lg:hidden flex justify-end p-4">
-      <button onClick={closeMenu} className="text-white text-2xl">
+      <button onClick={closeMenu} className="text-white text-8xl">
         × {/* Close icon */}
       </button>
     </li>
-    {isLoggedIn ? (
+    {isAuthenticated ? (
       <>
         <li className="mt-12 lg:mt-0 whitespace-nowrap">
           <Link
@@ -59,13 +69,17 @@ export default function Navbar({ isLoggedIn, handleLogout }) {
           </Link>
         </li>
         <li className="mt-4 lg:mt-0 whitespace-nowrap">
-          <a
-            onClick={() => { handleLogoutClick(); closeMenu(); }}
-            className="block text-white bg-zinc-900 hover:bg-zinc-700 active:bg-gray-500 px-4 py-2 rounded transition text-lg"
-          >
-            Odjavi se
-          </a>
-        </li>
+        <a
+          onClick={(e) => {
+            handleLogoutClick(e); // Call the logout function
+            closeMenu(); // Close the menu
+          }}
+          className="block text-white bg-zinc-900 hover:bg-zinc-700 active:bg-gray-500 px-4 py-2 rounded transition text-lg"
+        >
+          Odjavi se
+        </a>
+      </li>
+
       </>
     ) : (
       <>
