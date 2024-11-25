@@ -55,24 +55,15 @@ export async function loginHandler(req, res) {
 }
 
 export async function logoutHandler(req, res) {
-
-  const { refreshToken } = createToken({ 
-    id: user.clientId, 
-    userType: 'client', 
-    isVIP: user.isVIP 
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: true, // Ensure you're using HTTPS in production
+    sameSite: 'None',  // This is needed for cross-origin requests
+    path: '/',
   });
 
-
-  res.cookie('refreshToken', refreshToken, {
-    httpOnly: true, 
-    secure: true,
-    sameSite: "none",    
-    expires: new Date(1)
-});
-
-req.session.destroy();
-
-return res.status(200).json({ message: 'Logged out successfully.' });
+  // Respond with a success message
+  return res.status(200).json({ message: 'Logged out successfully.' });
 }
 
 

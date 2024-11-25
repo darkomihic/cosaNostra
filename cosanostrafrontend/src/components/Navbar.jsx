@@ -15,7 +15,10 @@ export default function Navbar({ isAuthenticated, setIsAuthenticated }) {
     e.preventDefault();
 
     try {
-        await axios.post('/logout', {}, { withCredentials: true });
+        await axios.post(`${apiUrl}/logout`, {}, { withCredentials: true, 
+        headers: {
+          'Content-Type': 'application/json',
+        } });
         setIsAuthenticated(false); // Update the state on successful logout
         navigate("/");
     } catch (error) {
