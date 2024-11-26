@@ -39,7 +39,7 @@ export default function Login({setIsAuthenticated}) {
       
       // Store the accessToken in your auth state
       setAuth({ token: accessToken });
-      setIsAuthenticated(true); // Update the state on successful logout
+      //setIsAuthenticated(true); // Update the state on successful logout
 
       //onLogin();  // Trigger re-render of Navbar
       navigate('/'); 

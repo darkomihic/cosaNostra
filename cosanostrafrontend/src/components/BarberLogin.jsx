@@ -27,16 +27,17 @@ export default function BarberLogin() {
         barberUsername,
         barberPassword
       }, {
+        withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
         },
       });
   
       // Handle successful login response
-      const { token } = response.data;  // Access the token directly from the response data
-      console.log("token: " + token);
+      const { accessToken } = response.data; // Directly access the accessToken from response.data
+      console.log("token: " + accessToken);
       
-      setAuth({ token });
+      setAuth({ token: accessToken });
       navigate('/barber-dashboard'); 
     } catch (error) {
       // Handle errors in the request or response

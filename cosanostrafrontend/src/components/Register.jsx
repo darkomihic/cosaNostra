@@ -3,9 +3,11 @@ import shopicon from '../assets/ikona.jpg';
 import { useNavigate } from 'react-router-dom';
 import Footer from './Footer';
 import axiosPrivate from '../api/axiosInstance';  // axios instance with interceptors applied
+import axios from 'axios'
+import useAuth from '../hooks/useAuth'; // Ensure correct path
 
 
-export default function Register() {
+export default function Register({setIsAuthenticated}) {
   const [clientUsername, setUsername] = useState('');
   const [clientPassword, setPassword] = useState('');
   const [repeatedPassword, setRepeatedPassword] = useState('');
@@ -17,6 +19,7 @@ export default function Register() {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API;
+  const { setAuth } = useAuth();
 
 
   const handleRegister = async (e) => {
@@ -40,8 +43,36 @@ export default function Register() {
         });
   
         // Handle successful registration
-        if (response.status === 200) {
-          navigate('/login');
+        if (response.status === 200 || response.status === 201) {
+          try {
+            const response = await axios.post(`${apiUrl}/login`, {
+              clientUsername,
+              clientPassword
+            }, {
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            })
+            const { accessToken } = response.data; // Directly access the accessToken from response.data
+            console.log("accessToken: " + accessToken); // Log accessToken to check
+      
+            // Store the accessToken in your auth state
+            setAuth({ token: accessToken });
+            //setIsAuthenticated(true); // Update the state on successful logout
+            navigate('/');
+          } catch(error) {
+            console.error('Error:', error);
+  
+            // Check if error is related to response
+            if (error.response) {
+              // If there's an error response from the server
+              setError(error.response.data.message || 'An unexpected error occurred');
+            } else {
+              // If there was an issue with the request itself (e.g., network issue)
+              setError('An unexpected error occurred');
+            }
+          }
+          
         }
       } catch (error) {
         // Handle errors in the request or response

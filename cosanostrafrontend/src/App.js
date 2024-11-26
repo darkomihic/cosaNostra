@@ -14,15 +14,16 @@ import useAuth from './hooks/useAuth';  // Import the custom hook
 import PersistLogin from './components/PersistLogin';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(true); // Assume the user is logged in initially
+  const { auth } = useAuth();
+  const isAuthenticated = !!auth?.token; // True if accessToken exists, false otherwise
 
   return (
     <Router>
-      <Navbar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />
+      <Navbar isAuthenticated={isAuthenticated} />
       <Routes>
         <Route path="/" element={<HeroLandingPage />} />
-        <Route path="/login" element={<Login isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated}/>} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login isAuthenticated={isAuthenticated}/>} />
+        <Route path="/register" element={<Register isAuthenticated={isAuthenticated}/>} />
         <Route path="/barber-login" element={<BarberLogin />} />
         <Route element={<PersistLogin/>}> 
           <Route path="/schedule" element={<Schedule />} />

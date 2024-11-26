@@ -126,7 +126,6 @@ const vipPayment = async () => {
     return;
   }
 
-  console.log("Service duration: " + await getServiceDuration(selectedService));
 
   try {
     const response = await axiosPrivate.post(
@@ -148,10 +147,7 @@ const vipPayment = async () => {
       }
     );
 
-    console.log("Response received:", response);
-
     if (response.status === 201) {
-      console.log("Navigating to /appointments");
       navigate('/appointments');
     } else {
       console.error('Unexpected response:', response);

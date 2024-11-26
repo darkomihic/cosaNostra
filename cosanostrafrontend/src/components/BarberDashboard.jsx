@@ -4,6 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { jwtDecode } from "jwt-decode";
 import useAuth from '../hooks/useAuth';  // Import the custom hook
 
+
 export default function BarberDashboard() {
   const [appointments, setAppointments] = useState([]);
   const [error, setError] = useState('');
@@ -19,10 +20,15 @@ export default function BarberDashboard() {
 
 
 
+
+
   useEffect(() => {
-    console.log("decoded: " + decoded.id);
     fetchAllAppointmentsForBarber();
   }, []);
+  
+
+
+  
 
   const fetchAllAppointmentsForBarber = async () => {
     try {
@@ -41,6 +47,7 @@ export default function BarberDashboard() {
       const sortedAppointments = data.sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate));
 
       setAppointments(sortedAppointments);
+      console.log(sortedAppointments);
     } catch (error) {
       console.error("Error fetching appointments:", error);
       setError(error.message);
@@ -134,10 +141,6 @@ export default function BarberDashboard() {
   function calculateTimeDifference(startTime, endTime) {
     console.log(`Start Time: ${startTime}, End Time: ${endTime}`);
   
-    // Check if the time strings are in the correct format
-    if (!/^\d{2}:\d{2}$/.test(startTime) || !/^\d{2}:\d{2}$/.test(endTime)) {
-      throw new Error('Invalid time format. Expected format HH:MM.');
-    }
   
     // Parse the start and end times
     const [startHours, startMinutes] = startTime.split(':').map(Number);
@@ -201,6 +204,9 @@ export default function BarberDashboard() {
       setError('Please select both start and end dates for the break');
       return;
     }
+
+    console.log("Break start: " + breakStart);
+    console.log("breakEnd: " + breakEnd);
     
     try {
       const barberId = decoded.id;
@@ -223,11 +229,13 @@ export default function BarberDashboard() {
         const errorData = await response.json();
         console.error('Failed to set break:', errorData.error);
         return;
+      }else {
+        setBreakStart(null);
+        setBreakEnd(null);
+        fetchAllAppointmentsForBarber(); // Refresh appointments after setting break
       }
 
-      setBreakStart(null);
-      setBreakEnd(null);
-      fetchAllAppointmentsForBarber(); // Refresh appointments after setting break
+      
     } catch (error) {
       console.error('Error setting break:', error);
     }

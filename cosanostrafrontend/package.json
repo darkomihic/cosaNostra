@@ -4,6 +4,7 @@
   "homepage": "https://darkslateblue-swan-637455.hostingersite.com/",
   "private": true,
   "dependencies": {
+    "@cubedoodl/react-simple-scheduler": "^1.3.3",
     "@stripe/stripe-js": "^3.5.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
