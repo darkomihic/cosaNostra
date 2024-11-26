@@ -5,7 +5,7 @@ import HeroLandingPage from "./components/HeroLandingPage";
 import Schedule from "./components/Schedule";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import BarberLogin from "./components/BarberLogin";
-import BarberDashboard from "./components/BarberDashboard";
+import BarberDashboard from "./components/barberDashboard/BarberDashboard";
 import Success from "./components/Success";
 import Cancel from "./components/Cancel";
 import Appointments from "./components/Appointments";
