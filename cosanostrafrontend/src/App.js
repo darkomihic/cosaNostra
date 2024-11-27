@@ -12,6 +12,7 @@ import Appointments from "./components/Appointments";
 import Navbar from "./components/Navbar";
 import useAuth from './hooks/useAuth';  // Import the custom hook
 import PersistLogin from './components/PersistLogin';
+import BarberCreateAppointment from './components/barberDashboard/BarberCreateAppointment';
 
 function App() {
   const { auth } = useAuth();
@@ -31,6 +32,7 @@ function App() {
           <Route path="/cancel" element={<Cancel />} />
           <Route path="/success" element={<Success />} />
           <Route path="/appointments" element={<Appointments />} />
+          <Route path="/barber-create-appointment" element={<BarberCreateAppointment />}/>
         </Route>
       </Routes>
     </Router>

@@ -45,6 +45,7 @@ export async function getAppointmentDetails(barberId) {
     A.appointmentDate,
     A.appointmentTime,
     A.appointmentDuration,
+    A.note,
     C.clientName,
     C.clientSurname,
     S.serviceName,

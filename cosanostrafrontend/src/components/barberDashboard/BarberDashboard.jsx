@@ -7,10 +7,13 @@ import BarberAvaialability from './BarberAvailability';
 import BarberVipHandling from './BarberVIPHandling';
 import BarberBreakHandler from './BarberBreakHandler';
 import BarberMultipleDayBreak from './BarberMultipleDayBreak';
+import { useNavigate } from "react-router-dom";
+
 
 export default function BarberDashboard() {
   const [appointments, setAppointments] = useState([]);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
 
   const { auth } = useAuth();
@@ -72,7 +75,7 @@ export default function BarberDashboard() {
       }
       const data = await response.json();
       const sortedAppointments = data.sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate));
-
+      console.log(sortedAppointments)
       setAppointments(sortedAppointments);
     } catch (error) {
       console.error("Error fetching appointments:", error);
@@ -91,6 +94,8 @@ export default function BarberDashboard() {
     const date = new Date(dateString); 
     return date.toLocaleString('en-US', options);
   };
+
+  
 
 
   const deleteAppointment = async (appointmentId) => {
@@ -122,7 +127,10 @@ export default function BarberDashboard() {
       setError(error.message);
     }
   };
-  
+
+  const CreateAppointmentButton = () => {
+    const navigate = useNavigate();
+  }
   
 
   
@@ -142,6 +150,12 @@ export default function BarberDashboard() {
     setError={setError}
     fetchAllAppointmentsForBarber={fetchAllAppointmentsForBarber}
   />
+  <button
+      onClick={() => navigate("/barber-create-appointment")}
+      className="w-48 py-2 my-4 bg-zinc-200 hover:bg-neutral-800 text-black hover:text-white rounded-xl font-bold mx-auto"
+    >
+      Kreiraj termin
+    </button>
   <div className="mt-6">
       <h3 className="text-lg sm:text-xl font-semibold mb-2">Appointments</h3>
       <div className="overflow-auto border border-neutral-700 rounded-md">

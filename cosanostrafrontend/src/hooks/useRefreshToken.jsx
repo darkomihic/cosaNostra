@@ -28,7 +28,6 @@ const useRefreshToken = () => {
   
       return newAccessToken;
     } catch (error) {
-      console.error("Error refreshing token:", error.message);
       throw error; // Rethrow error for the caller to handle
     }
   };

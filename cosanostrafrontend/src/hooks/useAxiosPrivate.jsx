@@ -33,7 +33,6 @@ const useAxiosPrivate = () => {
             }
           }
         } catch (error) {
-          console.error("Error refreshing token:", error.message);
           // Prevent redirection from certain pages like '/login'
           if (location.pathname !== "/login" && location.pathname !=="/" && location.pathname !=="") {
             navigate("/login", { replace: true });
