@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import {useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Footer from './Footer';
 import useAuth from '../hooks/useAuth';  // Import the custom hook
 import axiosPrivate from '../api/axiosInstance';  // axios instance with interceptors applied
+import shopicon from '../assets/ikona.jpg';
 
 
 export default function BarberLogin() {
@@ -57,35 +58,58 @@ export default function BarberLogin() {
 
 
   return (
-    <div className="w-full h-screen flex bg-neutral-950">
-      <div className="m-auto h-auto shadow-lg shadow-gray-1000 sm:max-w-[400px] bg-black p-6">
-        <h2 className="text-2xl font-bold text-center mb-8 text-white">Barber Login</h2>
-        <form onSubmit={handleLogin}>
-          <div className="mb-4">
-            <label className="block text-white mb-2">Username:</label>
-            <input
-              type="text"
-              className="w-full p-2 bg-gray-700 text-white"
-              value={barberUsername}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-white mb-2">Password:</label>
-            <input
-              type="password"
-              className="w-full p-2 bg-gray-700 text-white"
-              value={barberPassword}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <button className="w-full py-2 my-4 bg-custom-color hover:bg-custom-color2 text-white">Login</button>
-        </form>
-        {error && <p className="text-red-500">{error}</p>}
-      </div>
-      <Footer/>
+<div className="min-h-screen flex flex-col justify-between bg-neutral-950">
+  <div className="grid grid-cols-1 lg:grid-cols-2 m-auto h-auto lg:h-[550px] shadow-lg shadow-neutral-900 sm:max-w-[900px] bg-black rounded-2xl">
+    {/* Left Section: Placeholder or Icon */}
+    <div className="w-full h-full lg:h-auto flex justify-center items-center">
+      <img
+        className="w-full h-64 lg:w-auto lg:h-auto object-contain rounded-t-2xl lg:rounded-l-2xl"
+        src={shopicon} // Replace with the correct icon/image variable
+        alt="Shop icon"
+      />
     </div>
+
+    {/* Right Section: Login Form */}
+    <div className="p-4 lg:pr-24 pr-0 flex flex-col justify-around">
+      <p className="text-4xl font-semibold tracking-wider self-center mt-8 text-zinc-200 hidden sm:hidden md:hidden lg:block">
+        Prijavi se
+      </p>
+      <form className="flex flex-col items-center" onSubmit={handleLogin}>
+        <div className="flex flex-col sm:flex-row sm:space-x-2 mb-4">
+          {/* Username Input */}
+          <input
+            className="border p-2 mb-2 sm:mb-0 bg-zinc-200 text-black rounded-xl"
+            type="text"
+            placeholder="Korisničko ime"
+            value={barberUsername}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+          {/* Password Input */}
+          <input
+            className="border p-2 bg-zinc-200 text-black rounded-xl"
+            type="password"
+            placeholder="Šifra"
+            value={barberPassword}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        {/* Error Message */}
+        {error && <p className="text-red-500">{error}</p>}
+        {/* Submit Button */}
+        <button className="w-48 py-2 my-4 bg-zinc-200 hover:bg-neutral-800 text-black rounded-xl font-bold mx-auto">
+          Prijavi se
+        </button>
+      </form>
+      {/* Back to Home Link */}
+      <Link to="/" className="text-center text-zinc-200 font-bold sm:pt-4">
+        Nazad na početnu stranicu
+      </Link>
+    </div>
+  </div>
+  <Footer className="mt-auto" />
+</div>
+
   );
 }

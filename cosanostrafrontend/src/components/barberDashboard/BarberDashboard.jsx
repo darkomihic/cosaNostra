@@ -193,9 +193,8 @@ export default function BarberDashboard() {
                     : ""}
                 </td>
                 <td className="px-4 py-2">
-                  {`${appointment.clientName ?? ""} ${
-                    appointment.clientSurname ?? ""
-                  }`.trim() || "Pauza"}
+                {`${appointment.clientName ?? ""} ${appointment.clientSurname ?? ""}`.trim() || 
+                  (appointment.note === "BREAK" ? "Pauza" : appointment.note || "Pauza")}
                 </td>
                 <td className="px-4 py-2">{appointment.serviceName ?? "Pauza"}</td>
                 <td className="px-4 py-2">

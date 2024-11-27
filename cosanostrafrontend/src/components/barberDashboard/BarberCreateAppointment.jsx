@@ -13,22 +13,27 @@ export default function BarberCreateAppointment() {
   const [selectedService, setSelectedService] = useState('');
   const { auth } = useAuth();
   const [availableSlots, setAvailableSlots] = useState([]);
-  const [note] = useState('');
   const [error, setError] = useState('');
   const [selectedSlot, setSelectedSlot] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const navigate = useNavigate();
   const today = new Date();
   const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate());
   const tomorrowDateString = tomorrow.toISOString().split('T')[0];
   const lastDay = new Date(today);
+  lastDay.setDate(today.getDate() + 60);
   const lastDayString = lastDay.toISOString().split('T')[0];
+  const [clientName, setClientName] = useState('');
+
 
   let decoded = auth?.token ? jwtDecode(auth.token) : undefined;
 
 
   useEffect(() => {
 
+    console.log(tomorrowDateString)
+    console.log(lastDayString)
     decoded = auth?.token ? jwtDecode(auth.token) : undefined;
 
     fetchServices();
@@ -68,7 +73,7 @@ export default function BarberCreateAppointment() {
   };
 
   const createAppointment = async () => {
-    if (!selectedService || !selectedDate || !selectedSlot) {
+    if (!selectedService || !selectedDate || !selectedSlot || clientName==null) {
       setError('Please select all required fields');
       return;
     }
@@ -83,7 +88,7 @@ export default function BarberCreateAppointment() {
           appointmentDate: selectedDate,
           appointmentTime: dateToTime(selectedSlot),
           appointmentDuration: await getServiceDuration(selectedService),
-          note: note,
+          note: clientName,
           clientId: null,
         },
         {
@@ -95,7 +100,7 @@ export default function BarberCreateAppointment() {
       );
   
       if (response.status === 201) {
-        navigate('/appointments');
+        navigate('/barber-dashboard');
       } else {
         console.error('Unexpected response:', response);
         setError('Failed to schedule the appointment');
@@ -211,8 +216,8 @@ export default function BarberCreateAppointment() {
                 {formatTime(new Date(slot.start))} {/* Ensure slot.start is valid */}
               </option>
             ))}
-
             </select>
+            <input className='border p-2 mb-2 mt-2 sm:mb-2 bg-zinc-200 text-black rounded-xl' type='text' placeholder='Naziv klijenta' value={clientName} onChange={(e) => setClientName(e.target.value)} />
             <button
               className='w-full py-2 my-4 bg-zinc-200 hover:bg-neutral-800 text-black rounded-xl'
               onClick={createAppointment}

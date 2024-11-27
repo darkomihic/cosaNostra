@@ -134,7 +134,7 @@ export default function BarberBreakHandler({ setError, fetchAllAppointmentsForBa
         <div className="flex justify-end">
           <button
             onClick={handleBreakSubmit}
-            className="px-4 py-2 bg-blue-500 text-white rounded w-full sm:w-auto"
+            className="p-4 my-4 bg-zinc-200 hover:bg-neutral-800 text-black hover:text-white rounded-xl font-bold mx-auto"
           >
             Set Break
           </button>
