@@ -14,7 +14,6 @@ const stripeWebhookHandler = async (req, res) => {
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
   } catch (err) {
-    console.log(`⚠️  Webhook signature verification failed.`, err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
@@ -24,7 +23,6 @@ const stripeWebhookHandler = async (req, res) => {
       await handleCheckoutSessionCompleted(session);
       break;
     default:
-      console.log(`Unhandled event type ${event.type}`);
   }
 
   res.json({ received: true });

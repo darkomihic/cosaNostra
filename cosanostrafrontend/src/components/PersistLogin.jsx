@@ -15,7 +15,6 @@ const PersistLogin = () => {
       try {
         // If there's no token, try to refresh it
         if (!auth?.token && persist) {
-          console.log("Token is missing and persist is true, attempting to refresh...");
           await refresh();
         }
       } catch (err) {
@@ -27,14 +26,11 @@ const PersistLogin = () => {
       }
     };
 
-    console.log("auth.token inside useEffect:", auth?.token);
 
     // Only try to refresh the token if persist is true and auth.token is missing
     if (!auth?.token && persist) {
-      console.log("Token is missing and persist is true, calling verifyRefreshToken...");
       verifyRefreshToken();
     } else {
-      console.log("Either auth.token exists or persist is false, skipping refresh...");
       setIsLoading(false);  // Skip refresh if token exists or persist is false
     }
 

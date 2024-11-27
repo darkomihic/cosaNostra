@@ -35,7 +35,6 @@ export default function BarberLogin() {
   
       // Handle successful login response
       const { accessToken } = response.data; // Directly access the accessToken from response.data
-      console.log("token: " + accessToken);
       
       setAuth({ token: accessToken });
       navigate('/barber-dashboard'); 

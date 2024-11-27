@@ -17,8 +17,6 @@ export default function BarberBreakHandler({ setError, fetchAllAppointmentsForBa
       return;
     }
 
-    console.log("Break start: " + breakStart);
-    console.log("breakEnd: " + breakEnd);
     
     try {
       const barberId = decoded.id;
@@ -54,7 +52,6 @@ export default function BarberBreakHandler({ setError, fetchAllAppointmentsForBa
   };
 
   function calculateTimeDifference(startTime, endTime) {
-    console.log(`Start Time: ${startTime}, End Time: ${endTime}`);
   
   
     // Parse the start and end times
@@ -73,7 +70,6 @@ export default function BarberBreakHandler({ setError, fetchAllAppointmentsForBa
     // Calculate the difference in minutes
     const differenceInMinutes = endTotalMinutes - startTotalMinutes;
   
-    console.log(`Difference in Minutes: ${differenceInMinutes}`);
   
     return differenceInMinutes;
   };

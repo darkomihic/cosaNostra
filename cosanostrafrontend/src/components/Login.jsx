@@ -35,7 +35,6 @@ export default function Login({setIsAuthenticated}) {
   
       // Handle successful login response
       const { accessToken } = response.data; // Directly access the accessToken from response.data
-      console.log("accessToken: " + accessToken); // Log accessToken to check
       
       // Store the accessToken in your auth state
       setAuth({ token: accessToken });

@@ -12,7 +12,6 @@ export async function getAppointment(id) {
 
 export async function createAppointment(appointment) {
   const { appointmentDate, appointmentTime, note, appointmentDuration, barberId, clientId, serviceId} = appointment;
-  console.log({ appointmentDate, appointmentTime, note, appointmentDuration, barberId, clientId, serviceId });
   const [result] = await pool.query(`
     INSERT INTO appointment (appointmentDate, appointmentTime, note, appointmentDuration, barberId, clientId, serviceId)
     VALUES (?, ?, ?, ?, ?, ?, ?)

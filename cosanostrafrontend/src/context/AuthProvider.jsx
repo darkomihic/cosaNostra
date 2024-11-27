@@ -20,7 +20,6 @@ export const AuthProvider = ({ children }) => {
       if (newToken) {
 
         const decodedToken = jwtDecode(newToken);
-        console.log("Decoded Token:", decodedToken);
 
 
         // Store the token in cookies
@@ -29,7 +28,6 @@ export const AuthProvider = ({ children }) => {
           ...prev,
           token: newToken
         }));
-        console.log("Token refreshed successfully:", newToken);
       }
     } catch (err) {
       console.error("Error refreshing token:", err);
@@ -46,7 +44,6 @@ export const AuthProvider = ({ children }) => {
         token: storedToken,
         user: null, // Optionally, fetch and set user info
       });
-      console.log("Token loaded from cookies:", storedToken);
     } else {
       refreshToken(); // If no token, attempt to refresh it
     }

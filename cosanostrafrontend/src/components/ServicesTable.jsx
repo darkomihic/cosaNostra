@@ -10,7 +10,6 @@ export default function ServicesTable() {
     // Accessing the API URL from the environment variable
     const apiUrl = process.env.REACT_APP_API; // Ensure you're using the correct variable
 
-    console.log('API URL:', apiUrl); // Log the API URL being used
 
     // Using axios to fetch data
     axiosPrivate

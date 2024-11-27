@@ -11,7 +11,6 @@ export default function BarberMultipleDayBreak({ setError, fetchAllAppointmentsF
   const apiUrl = process.env.REACT_APP_API;
 
   function calculateTimeDifference(startTime, endTime) {
-    console.log(`Start Time: ${startTime}, End Time: ${endTime}`);
   
   
     // Parse the start and end times
@@ -30,7 +29,6 @@ export default function BarberMultipleDayBreak({ setError, fetchAllAppointmentsF
     // Calculate the difference in minutes
     const differenceInMinutes = endTotalMinutes - startTotalMinutes;
   
-    console.log(`Difference in Minutes: ${differenceInMinutes}`);
   
     return differenceInMinutes;
   };
@@ -39,11 +37,9 @@ export default function BarberMultipleDayBreak({ setError, fetchAllAppointmentsF
     const startDate = new Date(start);
     const endDate = new Date(end);
 
-    console.log("Iterating from:", startDate.toDateString(), "to:", endDate.toDateString());
 
     const date = new Date(startDate);
     while (date <= endDate) {
-        console.log('Current Date:', date.toDateString());
         callback(new Date(date));
         date.setDate(date.getDate() + 1);
     }
@@ -52,17 +48,14 @@ export default function BarberMultipleDayBreak({ setError, fetchAllAppointmentsF
 const handleMultipleDayBreakSubmit = async () => {
     if (!startBreakDate || !endBreakDate) {
         setError('Please select start and end dates for the break');
-        console.log('Missing date(s):', startBreakDate, endBreakDate);
         return;
     }
 
-    console.log('Start Date:', startBreakDate, 'End Date:', endBreakDate);
 
     try {
         const barberId = decoded.id;
 
         iterateDaysInRange(startBreakDate, endBreakDate, async (date) => {
-            console.log("usao");
 
             const response = await fetch(`${apiUrl}/appointment`, {
                 method: 'POST',
@@ -85,7 +78,6 @@ const handleMultipleDayBreakSubmit = async () => {
                 return;
             }
 
-            console.log(`Break set for ${date}`);
         });
 
         setStartBreakDate(null);

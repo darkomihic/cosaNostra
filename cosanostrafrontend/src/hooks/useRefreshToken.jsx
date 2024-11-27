@@ -6,7 +6,6 @@ const useRefreshToken = () => {
 
   const refresh = async () => {
     try {
-      console.log("Attempting to refresh token...");
   
       // Send the request to refresh endpoint; HttpOnly cookie will be sent automatically
       const response = await axios.post(
@@ -16,7 +15,6 @@ const useRefreshToken = () => {
       );
   
       const newAccessToken = response.data?.accessToken;
-      console.log("New token received:", newAccessToken);
   
       if (!newAccessToken) {
         throw new Error("No access token returned by /refresh endpoint");
@@ -27,7 +25,6 @@ const useRefreshToken = () => {
         ...prev,
         token: newAccessToken,
       }));
-      console.log("Token has been refreshed and set in context:", newAccessToken);
   
       return newAccessToken;
     } catch (error) {

@@ -74,7 +74,6 @@ export default function BarberDashboard() {
       const sortedAppointments = data.sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate));
 
       setAppointments(sortedAppointments);
-      console.log(sortedAppointments);
     } catch (error) {
       console.error("Error fetching appointments:", error);
       setError(error.message);
@@ -188,10 +187,6 @@ export default function BarberDashboard() {
                 <td className="px-4 py-2">
                   <button
                     onClick={() => {
-                      console.log(
-                        "Deleting appointment with ID:",
-                        appointment.appointmentId
-                      );
                       if (appointment.appointmentId) {
                         deleteAppointment(appointment.appointmentId);
                       } else {

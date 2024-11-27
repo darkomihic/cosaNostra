@@ -21,11 +21,9 @@ export default function Appointments() {
 
 
   useEffect(() => {
-    console.log("Auth.token:", auth?.token);
   
     try {
       const decoded = auth?.token ? jwtDecode(auth.token) : null;
-      console.log("Decoded Token:", decoded);
   
       if (decoded?.id) {
         fetchAllAppointmentsForClient();

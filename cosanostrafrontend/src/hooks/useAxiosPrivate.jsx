@@ -16,7 +16,6 @@ const useAxiosPrivate = () => {
 
   useEffect(() => {
     if (auth?.token == null) {
-      console.log("Token is null, attempting to refresh...");
 
       const refreshToken = async () => {
         try {
@@ -47,7 +46,6 @@ const useAxiosPrivate = () => {
 
     const responseIntercept = axiosPrivate.interceptors.response.use(
       (response) => {
-        console.log("Response Interceptor: Response Data", response.data);
         return response;
       },
       async (error) => {
@@ -55,13 +53,11 @@ const useAxiosPrivate = () => {
         const prevRequest = error?.config;
 
         if (error?.response?.status === 403 && !prevRequest?.sent) {
-          console.log("Token expired, attempting to refresh...");
           prevRequest.sent = true;
 
           try {
             const newAccessToken = await refresh();
             if (newAccessToken) {
-              console.log("New Access Token from Refresh:", newAccessToken);
               setAuth((prev) => ({
                 ...prev,
                 token: newAccessToken,
@@ -102,8 +98,6 @@ const useAxiosPrivate = () => {
         (response) => response,
         (error) => {
           if (error.response?.status === 401) {
-            console.log("Unauthorized, refresh token...");
-            // Refresh token logic can be implemented here
           }
           return Promise.reject(error);
         }
@@ -116,10 +110,8 @@ const useAxiosPrivate = () => {
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       (config) => {
-        console.log('Request Interceptor: Auth state:', auth); // Log the auth state
         if (auth?.token && !config.headers['Authorization']) {
           config.headers['Authorization'] = `Bearer ${auth.token}`;
-          console.log("Request Headers after Authorization:", config.headers);  // Log the updated headers
         }
         return config;
       },

@@ -7,13 +7,11 @@ export async function authenticateClient(username, password) {
   const client = rows[0];
 
   if (!client) {
-    console.log(`No client found with username: ${username}`);
     return null;
   }
 
   const passwordMatch = await bcrypt.compare(password, client.clientPassword);
   if (!passwordMatch) {
-    console.log(`Password does not match for username: ${username}`);
     return null;
   }
   
@@ -25,13 +23,11 @@ export async function authenticateBarber(username, password) {
   const barber = rows[0];
 
   if (!barber) {
-    console.log(`No barber found with username: ${username}`);
     return null;
   }
 
   const passwordMatch = await bcrypt.compare(password, barber.barberPassword);
   if (!passwordMatch) {
-    console.log(`Password does not match for username: ${username}`);
     return null;
   }
   return barber;

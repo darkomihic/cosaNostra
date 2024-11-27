@@ -26,7 +26,6 @@ export default function Register({setIsAuthenticated}) {
     e.preventDefault();
   
     if (validateForm()) {
-      console.log('Form submitted successfully');
       try {
         // Send the registration request using axios
         const response = await axiosPrivate.post(`${apiUrl}/register`, {
@@ -54,7 +53,6 @@ export default function Register({setIsAuthenticated}) {
               }
             })
             const { accessToken } = response.data; // Directly access the accessToken from response.data
-            console.log("accessToken: " + accessToken); // Log accessToken to check
       
             // Store the accessToken in your auth state
             setAuth({ token: accessToken });
