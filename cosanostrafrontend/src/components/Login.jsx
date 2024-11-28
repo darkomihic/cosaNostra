@@ -5,8 +5,6 @@ import Footer from './Footer';
 import useAuth from '../hooks/useAuth'; // Ensure correct path
 import axios from '../api/axiosInstance';
 
-
-
 export default function Login({setIsAuthenticated}) {
   const [clientUsername, setUsername] = useState('');
   const [clientPassword, setPassword] = useState('');
@@ -14,8 +12,6 @@ export default function Login({setIsAuthenticated}) {
   const navigate = useNavigate();
   const { setAuth } = useAuth();
   const apiUrl = process.env.REACT_APP_API;
-
-
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -65,7 +61,6 @@ export default function Login({setIsAuthenticated}) {
       <div className='w-full h-full lg:h-auto flex justify-center items-center'>
         <img className='w-full h-64 lg:w-auto lg:h-auto object-contain rounded-t-2xl lg:rounded-l-2xl' src={shopicon} alt='Shop icon' />
       </div>
-
       <div className="p-4 lg:pr-24 pr-0 flex flex-col justify-around">
       <p className="text-4xl font-semibold tracking-wider self-center mt-8 text-zinc-200 hidden sm:hidden md:hidden lg:block">Prijavi se</p>
       <form className='flex flex-col items-center' onSubmit={handleLogin}>
@@ -82,9 +77,6 @@ export default function Login({setIsAuthenticated}) {
     </div>
     <Footer className="mt-auto" />
   </div>
-
-
-
 
   );
 }
