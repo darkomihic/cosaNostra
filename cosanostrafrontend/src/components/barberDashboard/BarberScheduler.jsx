@@ -92,7 +92,7 @@ export default function BarberScheduler({
         <Calendar
           dayLayoutAlgorithm={dayLayoutAlgorithm}
           defaultDate={defaultDate}
-          defaultView={Views.WEEK}
+          defaultView={Views.DAY}
           events={events} // Use the transformed events here
           localizer={localizer}
           onSelectEvent={handleSelectEvent}
@@ -105,5 +105,5 @@ export default function BarberScheduler({
         />
       </div>
     </Fragment>
-  );
+  )
 }
