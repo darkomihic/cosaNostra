@@ -8,6 +8,22 @@ import BarberVipHandling from './BarberVIPHandling';
 import BarberBreakHandler from './BarberBreakHandler';
 import BarberMultipleDayBreak from './BarberMultipleDayBreak';
 import { useNavigate } from "react-router-dom";
+import BarberScheduler from './BarberScheduler';
+import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
+import { format, parse, startOfWeek, getDay } from 'date-fns';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+
+const locales = {
+  'en-US': require('date-fns/locale/en-US'),
+};
+
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
+});
 
 
 export default function BarberDashboard() {
@@ -75,7 +91,6 @@ export default function BarberDashboard() {
       }
       const data = await response.json();
       const sortedAppointments = data.sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate));
-      console.log(sortedAppointments)
       setAppointments(sortedAppointments);
     } catch (error) {
       console.error("Error fetching appointments:", error);
@@ -217,6 +232,7 @@ export default function BarberDashboard() {
         </table>
       </div>
     </div>
+    <BarberScheduler localizer={localizer} />;
   </div>
 
   );
