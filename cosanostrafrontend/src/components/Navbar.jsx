@@ -13,8 +13,11 @@ import Logoutpng from '../assets/logout.png'
 export default function Navbar({ isAuthenticated }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const apiUrl = process.env.REACT_APP_API;
   const { setAuth } = useAuth();
+  const apiUrl =
+  process.env.NODE_ENV === 'development'
+    ? process.env.REACT_APP_API_LOCAL // Use local API in development
+    : process.env.REACT_APP_API;      // Use production API in production
 
 
   const handleLogoutClick = async (e) => {

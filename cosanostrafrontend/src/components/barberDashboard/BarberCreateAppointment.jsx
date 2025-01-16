@@ -9,7 +9,10 @@ import { useNavigate } from 'react-router-dom';
 export default function BarberCreateAppointment() {
   const [services, setServices] = useState([]);
   const axiosPrivate = useAxiosPrivate();
-  const apiUrl = process.env.REACT_APP_API;
+  const apiUrl =
+  process.env.NODE_ENV === 'development'
+    ? process.env.REACT_APP_API_LOCAL // Use local API in development
+    : process.env.REACT_APP_API;      // Use production API in production
   const [selectedService, setSelectedService] = useState('');
   const { auth } = useAuth();
   const [availableSlots, setAvailableSlots] = useState([]);

@@ -8,7 +8,10 @@ import axios from "axios";
 const useAxiosPrivate = () => {
   const { refresh } = useRefreshToken();
   const { auth } = useAuth();
-  const apiUrl = process.env.REACT_APP_API;
+  const apiUrl =
+  process.env.NODE_ENV === 'development'
+    ? process.env.REACT_APP_API_LOCAL // Use local API in development
+    : process.env.REACT_APP_API;      // Use production API in production
   const [isLoading, setIsLoading] = useState(true); // To manage loading state
   const navigate = useNavigate();
   const location = useLocation();  // Get current location

@@ -2,7 +2,10 @@ import useAuth from '../../hooks/useAuth'; // Import the custom hook
 import React, { useState } from 'react';
 
 export default function BarberVipHandling({ setError }) {
-  const apiUrl = process.env.REACT_APP_API;
+  const apiUrl =
+  process.env.NODE_ENV === 'development'
+    ? process.env.REACT_APP_API_LOCAL // Use local API in development
+    : process.env.REACT_APP_API;      // Use production API in production
   const { auth } = useAuth();
   const [username, setUsername] = useState('');
   const [notification, setNotification] = useState('');

@@ -1,4 +1,5 @@
 import https from 'https';
+import http from 'http'; // Added for local development
 import fs from 'fs';
 import express from 'express';
 import path from 'path';
@@ -19,10 +20,22 @@ import { getBarberAppointmentHandler, getBarberAppointmentsHandler, createBarber
 import { stripeWebhookHandler } from './controllers/stripeWebhookController.js';
 
 const app = express();
-const stripe = new Stripe('sk_test_51PP98SRxP15yUwgNmYFy3NfQoDI6slODC3kWM2Z1eDtPEXro38hpPEuA59oMy4UxC2tHnCFHvnFrfNzdx1UOScFZ00CPPVJpCO');
+const isProduction = process.env.NODE_ENV === 'production';
+
+const allowedOrigins = [
+  'https://kosa-nostra.com', // Production frontend
+  'http://localhost:3001',  // Local frontend
+];
+
 
 const corsOptions = {
-  origin: 'https://kosa-nostra.com',
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -101,14 +114,22 @@ app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "build", "index.html"));
 });
 
-// Load SSL certificate and key
-const sslOptions = {
-  key: fs.readFileSync('/etc/letsencrypt/live/www.api.kosa-nostra.com/privkey.pem'), // Path to your Let's Encrypt private key
-  cert: fs.readFileSync('/etc/letsencrypt/live/www.api.kosa-nostra.com/fullchain.pem') // Path to your Let's Encrypt certificate
-};
+if (isProduction) {
+  // Load SSL certificate and key for production
+  const sslOptions = {
+    key: fs.readFileSync('/etc/letsencrypt/live/www.api.kosa-nostra.com/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/www.api.kosa-nostra.com/fullchain.pem'),
+  };
 
-// Start HTTPS server
-https.createServer(sslOptions, app).listen(8080, () => {
-  console.log('HTTPS Server running on port 8080');
-});
+  // Start HTTPS server in production
+  https.createServer(sslOptions, app).listen(8080, () => {
+    console.log('HTTPS Server running on port 8080');
+  });
+} else {
+  // Start HTTP server for local development
+  const port = 3000; // Use a different port for local testing
+  http.createServer(app).listen(port, () => {
+    console.log(`HTTP Server running on port ${port}`);
+  });
+}
 

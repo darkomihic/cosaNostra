@@ -26,7 +26,10 @@ export default function Schedule() {
   const lastDay = new Date(today);
   lastDay.setDate(today.getDate() + 8);
   const lastDayString = lastDay.toISOString().split('T')[0];
-  const apiUrl = process.env.REACT_APP_API;
+  const apiUrl =
+  process.env.NODE_ENV === 'development'
+    ? process.env.REACT_APP_API_LOCAL // Use local API in development
+    : process.env.REACT_APP_API;      // Use production API in production
   const axiosPrivate = useAxiosPrivate();
   let decoded = auth?.token ? jwtDecode(auth.token) : undefined;
   let isVIP = decoded?.isVIP?.data?.[0] === 1;

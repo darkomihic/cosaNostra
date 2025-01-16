@@ -8,8 +8,10 @@ export default function BarberMultipleDayBreak({ setError, fetchAllAppointmentsF
   const [endBreakDate, setEndBreakDate] = useState(null);
   const { auth } = useAuth();
   const decoded = auth?.token ? jwtDecode(auth.token) : undefined;
-  const apiUrl = process.env.REACT_APP_API;
-
+  const apiUrl =
+  process.env.NODE_ENV === 'development'
+    ? process.env.REACT_APP_API_LOCAL // Use local API in development
+    : process.env.REACT_APP_API;      // Use production API in production
   function calculateTimeDifference(startTime, endTime) {
   
   

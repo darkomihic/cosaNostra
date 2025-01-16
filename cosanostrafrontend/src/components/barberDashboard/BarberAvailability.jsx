@@ -4,7 +4,10 @@ import { jwtDecode } from "jwt-decode";
 
 
 export default function BarberAvaialability() {
-  const apiUrl = process.env.REACT_APP_API;
+  const apiUrl =
+  process.env.NODE_ENV === 'development'
+    ? process.env.REACT_APP_API_LOCAL // Use local API in development
+    : process.env.REACT_APP_API;      // Use production API in production
   const { auth } = useAuth();
   const decoded = auth?.token ? jwtDecode(auth.token) : undefined;
   const [notification, setNotification] = useState(""); // State for the notification message

@@ -8,8 +8,10 @@ export default function ServicesTable() {
 
   useEffect(() => {
     // Accessing the API URL from the environment variable
-    const apiUrl = process.env.REACT_APP_API; // Ensure you're using the correct variable
-
+    const apiUrl =
+    process.env.NODE_ENV === 'development'
+      ? process.env.REACT_APP_API_LOCAL // Use local API in development
+      : process.env.REACT_APP_API;      // Use production API in production
 
     // Using axios to fetch data
     axiosPrivate

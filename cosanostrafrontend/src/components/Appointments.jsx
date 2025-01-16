@@ -13,7 +13,10 @@ export default function Appointments() {
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const apiUrl = process.env.REACT_APP_API;
+  const apiUrl =
+  process.env.NODE_ENV === 'development'
+    ? process.env.REACT_APP_API_LOCAL // Use local API in development
+    : process.env.REACT_APP_API;      // Use production API in production
   const axiosPrivate = useAxiosPrivate();
 
   let decoded = auth?.token ? jwtDecode(auth.token) : undefined;
