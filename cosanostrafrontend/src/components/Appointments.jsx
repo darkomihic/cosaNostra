@@ -9,7 +9,6 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
 export default function Appointments() {
   const { auth } = useAuth();
-  const [appointments, setAppointments] = useState([]);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -24,45 +23,43 @@ export default function Appointments() {
 
 
   useEffect(() => {
-  
-    try {
-      const decoded = auth?.token ? jwtDecode(auth.token) : null;
-  
-      if (decoded?.id) {
-        fetchAllAppointmentsForClient();
-      } else {
-        console.error("Decoded token does not contain 'id'");
+    const fetchAllAppointmentsForClient = async () => {
+        try {
+            const data = await fetchAppointments(decoded.id); // Use global `decoded`
+            const result = filterPastAppointments(data); 
+            setFilteredAppointments(result);
+        } catch (error) {
+            console.error('Error fetching appointments:', error);
+            setError(error.message);
+        }
+    };
+
+    const fetchAppointments = async (clientId) => {
+      const url = `${apiUrl}/appointment-details-client/${clientId}`;
+      try {
+        const response = await axiosPrivate.get(url);  // Now using the axiosPrivate hook
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching appointments:', error);
+        throw error;
       }
-    } catch (error) {
-      console.error("Error decoding token:", error);
-    }
-  }, [auth.token]);
-  
-  const fetchAllAppointmentsForClient = async () => {
+    };
+
     try {
-      const data = await fetchAppointments(decoded.id); // Make sure decoded is available here
-      setAppointments(data);
-      const result = filterPastAppointments(data); // Filter after fetching the data
-      setFilteredAppointments(result);
+        if (decoded?.id) {
+            fetchAllAppointmentsForClient();
+        } else {
+            console.error("Decoded token does not contain 'id'");
+        }
     } catch (error) {
-      console.error('Error fetching appointments:', error);
-      setError(error.message);
+        console.error("Error decoding token:", error);
     }
-  };
-  
+}, [auth.token, apiUrl, axiosPrivate, decoded.id]); // Only depend on auth.token
 
 
 
-  const fetchAppointments = async (clientId) => {
-    const url = `${apiUrl}/appointment-details-client/${clientId}`;
-    try {
-      const response = await axiosPrivate.get(url);  // Now using the axiosPrivate hook
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching appointments:', error);
-      throw error;
-    }
-  };
+
+
   
 
   const convertTime = (timeString) => {

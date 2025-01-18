@@ -2,9 +2,14 @@ import { createContext, useState, useEffect } from "react";
 import Cookies from "js-cookie"; // Import js-cookie
 import axios from "axios";
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode
-
+import { axiosPrivate } from "../api/axiosInstance";
 
 const AuthContext = createContext({});
+
+const apiUrl =
+  process.env.NODE_ENV === 'development'
+    ? process.env.REACT_APP_API_LOCAL // Use local API in development
+    : process.env.REACT_APP_API;      // Use production API in production
 
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({
@@ -14,13 +19,12 @@ export const AuthProvider = ({ children }) => {
   // Function to refresh the token by calling the /refresh endpoint
   const refreshToken = async () => {
     try {
-      const response = await axios.get("/refresh"); // Your refresh route
+      const response = await axiosPrivate.post(`${apiUrl}/refresh`); // Your refresh route
       const newToken = response.data.accessToken;
 
       if (newToken) {
 
         const decodedToken = jwtDecode(newToken);
-
 
         // Store the token in cookies
         Cookies.set("token", newToken, { expires: 7 }); // Store for 7 days

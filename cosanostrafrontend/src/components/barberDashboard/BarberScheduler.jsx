@@ -38,7 +38,7 @@ export default function BarberScheduler({
 
 
       const transformedEvents = data.map((appointment) => {
-        const { appointmentDate, appointmentTime, appointmentDuration, clientName, clientSurname, serviceName, note, clientId } = appointment;
+        const { appointmentDate, appointmentTime, appointmentDuration, clientName, clientSurname, serviceName, note, clientPhone, clientId } = appointment;
       
         // Combine appointmentDate with appointmentTime to form a valid datetime
         const fullDateString = `${appointmentDate.slice(0, 10)}T${appointmentTime}`; // Take only the date part and append the time
@@ -52,13 +52,13 @@ export default function BarberScheduler({
       
         // Calculate the end time based on appointmentDuration
         const end = new Date(start.getTime() + appointmentDuration * 60 * 1000);
-      
         return {
           title: clientName
             ? `${clientName} ${clientSurname} - ${serviceName}`
             : note || 'No Title',
           start,
           end,
+          phone: clientPhone
         };
       }).filter(event => event !== null);  // Filter out invalid events
       
@@ -78,7 +78,7 @@ export default function BarberScheduler({
   }, []);
 
 
-  const handleSelectEvent = useCallback((event) => window.alert(event.title), []);
+  const handleSelectEvent = useCallback((event) => window.alert(`${event.title} \nBroj telefona: ${event.phone}`), []);
 
   const { defaultDate, scrollToTime } = useMemo(
     () => ({
